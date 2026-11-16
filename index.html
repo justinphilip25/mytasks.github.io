@@ -5,337 +5,477 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#ffffff">
-<meta name="description" content="A free notes, tasks and checklist app.">
-<title>Evernote Lite — Notes & Tasks</title>
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="description" content="Notes, tasks and checklists in one place.">
+<title>Evernote Lite</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
 <style>
-:root{
-  --green:#16865b;--green-dark:#106b48;--bg:#f6f8f6;
-  --surface:#fff;--text:#202820;--muted:#778078;
-  --line:#e8ede8;--shadow:0 5px 22px #183b2410;
+:root {
+  --green:#16865b; --green2:#e6f4eb; --bg:#f7f9f7;
+  --surface:#fff; --text:#202820; --muted:#778078;
+  --line:#e5ebe5; --shadow:0 4px 18px #183b2410;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-.app{min-height:100vh}
-header{height:68px;background:#fff;border-bottom:1px solid var(--line);
-display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:5}
-.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;white-space:nowrap}
-.logo{width:36px;height:36px;border-radius:12px;background:var(--green);color:white;
-display:grid;place-items:center;font-size:21px}
-.search{max-width:620px;flex:1;margin:auto;position:relative}
-.search input{width:100%;border:0;background:#f1f5f1;border-radius:13px;padding:13px 16px 13px 42px;outline:none}
-.search span{position:absolute;left:15px;top:11px;color:var(--muted)}
-.header-actions{display:flex;gap:8px}
-.icon-btn{border:0;background:#f2f5f2;border-radius:11px;padding:10px 12px;color:#405044}
-.icon-btn:hover{background:#e6f2e9}
-.layout{display:flex;max-width:1500px;margin:auto}
-aside{width:225px;padding:24px 14px;flex-shrink:0}
-.nav{display:flex;align-items:center;gap:13px;padding:13px 16px;border-radius:0 25px 25px 0;
-color:#536056;cursor:pointer;margin:4px 0;font-size:14px}
-.nav.active,.nav:hover{background:#e2f2e7;color:var(--green-dark);font-weight:700}
-.nav .count{margin-left:auto;font-size:12px;color:var(--muted)}
-.side-label{font-size:11px;color:#9aa39b;font-weight:700;letter-spacing:1px;margin:25px 16px 8px}
-main{flex:1;min-width:0;padding:30px 28px 90px}
-.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+ outline:2px solid var(--green);outline-offset:2px
+}
+header{height:66px;background:white;border-bottom:1px solid var(--line);
+ display:flex;align-items:center;gap:14px;padding:0 20px;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:800;white-space:nowrap}
+.logo{width:35px;height:35px;border-radius:11px;background:var(--green);color:white;
+ display:grid;place-items:center;font-size:22px}
+.search{flex:1;max-width:650px;margin:auto;position:relative}
+.search span{position:absolute;left:13px;top:10px;color:#78857a}
+.search input{width:100%;border:0;background:#f0f4f0;border-radius:12px;padding:12px 14px 12px 38px}
+.header-buttons{display:flex;gap:7px}
+.btn-icon{border:0;background:#f0f4f0;border-radius:10px;padding:10px;color:#455449}
+.layout{display:flex;max-width:1500px;margin:auto;min-height:calc(100vh - 66px)}
+aside{width:220px;padding:23px 12px;flex-shrink:0}
+.nav{width:100%;display:flex;gap:12px;align-items:center;text-align:left;
+ padding:13px 16px;border:0;background:transparent;border-radius:0 25px 25px 0;
+ color:#536056;margin:3px 0;font-size:14px}
+.nav.active,.nav:hover{background:var(--green2);color:#106b48;font-weight:700}
+.nav-label{font-size:11px;color:#9aa39b;font-weight:bold;letter-spacing:1px;margin:25px 15px 8px}
+main{flex:1;min-width:0;padding:28px 25px 90px}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}
 h1{font-size:25px;margin:0 0 5px}
 .subtitle{font-size:13px;color:var(--muted)}
-.primary{background:var(--green);color:white;border:0;border-radius:12px;padding:12px 18px;font-weight:700}
-.primary:hover{background:var(--green-dark)}
-.secondary{background:white;border:1px solid var(--line);border-radius:11px;padding:10px 13px;color:#465348}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
-.chip{border:1px solid var(--line);background:#fff;color:#657067;border-radius:20px;padding:8px 14px;font-size:12px}
-.chip.active{background:#e2f2e7;color:var(--green-dark);border-color:#c7e4d0;font-weight:700}
-.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:15px;align-items:start}
-.note{background:white;border:1px solid var(--line);border-radius:15px;padding:16px;
-box-shadow:var(--shadow);position:relative;min-height:135px;overflow:hidden}
-.note:hover{border-color:#b8d8c1}
-.note.pinned{border-top:3px solid var(--green)}
-.note h3{font-size:16px;margin:0 25px 9px 0;overflow-wrap:anywhere}
-.note-body{font-size:13px;line-height:1.55;color:#58635a;white-space:pre-wrap;overflow-wrap:anywhere}
-.pin{position:absolute;right:13px;top:12px;border:0;background:transparent;color:#879188}
-.note-meta{font-size:11px;color:#89948b;margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
-.note-actions{display:flex;gap:5px;margin-top:13px;opacity:.75}
-.note-actions button{border:0;background:#f2f5f2;border-radius:8px;padding:7px 9px;color:#59645b;font-size:12px}
-.note-actions button:hover{background:#e2f2e7;color:var(--green-dark)}
-.check-row{display:flex;gap:8px;align-items:flex-start;margin:7px 0;font-size:13px;color:#59635b}
-.check-row input{accent-color:var(--green);margin-top:3px}
-.done-text{text-decoration:line-through;color:#a0aaa1}
-.empty{grid-column:1/-1;text-align:center;padding:75px 15px;color:var(--muted)}
-.empty .big{font-size:42px;margin-bottom:12px}
-.empty h2{font-size:18px;color:#455047}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:23px}
-.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}
-.stat strong{display:block;font-size:23px;color:var(--green)}
+.primary{border:0;border-radius:11px;padding:12px 17px;background:var(--green);color:white;font-weight:bold}
+.primary:hover{background:#106b48}
+.secondary{border:1px solid var(--line);background:white;border-radius:10px;padding:10px 13px;color:#536056}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{border:1px solid var(--line);background:white;border-radius:20px;padding:8px 14px;color:#657067;font-size:12px}
+.chip.active{background:var(--green2);color:#106b48;border-color:#c9e4d1;font-weight:bold}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stat{background:white;border:1px solid var(--line);border-radius:13px;padding:14px}
+.stat strong{display:block;color:var(--green);font-size:23px}
 .stat span{font-size:12px;color:var(--muted)}
-.overlay{position:fixed;inset:0;background:#15251bb0;z-index:20;display:none;
-align-items:center;justify-content:center;padding:15px}
-.overlay.show{display:flex}
-.dialog{width:min(560px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:19px;padding:22px;box-shadow:0 20px 70px #0003}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:14px;align-items:start}
+.card{background:white;border:1px solid var(--line);border-radius:14px;padding:15px;
+ box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.card.pinned{border-top:3px solid var(--green)}
+.card h3{font-size:16px;margin:0 28px 9px 0;overflow-wrap:anywhere}
+.card-content{font-size:13px;color:#566158;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.card-top{display:flex;justify-content:space-between;align-items:start}
+.pin-button{border:0;background:transparent;color:#758078;padding:2px 4px}
+.meta{font-size:11px;color:#89948b;margin-top:13px;display:flex;gap:6px;flex-wrap:wrap}
+.actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:13px}
+.actions button{border:0;background:#f1f4f1;color:#526056;border-radius:7px;padding:7px 9px;font-size:11px}
+.actions button:hover{background:var(--green2);color:#106b48}
+.check-item{display:flex;align-items:flex-start;gap:9px;margin:8px 0;font-size:13px;color:#536056}
+.check-item input{margin-top:3px;accent-color:var(--green)}
+.checked{text-decoration:line-through;color:#9aa39b}
+.empty{grid-column:1/-1;text-align:center;padding:65px 15px;color:var(--muted)}
+.empty strong{display:block;font-size:18px;color:#465248;margin:10px}
+.banner{display:none;background:#e8f5eb;border:1px solid #d1e9d8;border-radius:13px;
+ padding:14px;margin-bottom:20px;align-items:center;justify-content:space-between;gap:12px}
+.banner p{font-size:12px;color:#637066;margin:5px 0 0}
+.overlay{display:none;position:fixed;inset:0;background:#102016aa;z-index:20;
+ align-items:center;justify-content:center;padding:14px}
+.overlay.open{display:flex}
+.dialog{background:white;width:min(560px,100%);max-height:92vh;overflow:auto;
+ border-radius:18px;padding:21px}
 .dialog-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
-.dialog-head h2{margin:0;font-size:20px}
-.close{border:0;background:#f1f4f1;border-radius:50%;width:34px;height:34px}
-.field{margin:12px 0}
-.field label{display:block;font-size:12px;font-weight:700;color:#657067;margin-bottom:7px}
-.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #dfe7df;border-radius:10px;outline:none;background:#fff}
-.field input:focus,.field textarea:focus{border-color:var(--green)}
-.field textarea{min-height:130px;resize:vertical}
+.dialog-head h2{font-size:20px;margin:0}
+.close{border:0;border-radius:50%;width:34px;height:34px;background:#f0f4f0}
+.field{margin:13px 0}
+.field label{display:block;font-size:12px;font-weight:bold;color:#657067;margin-bottom:7px}
+.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #dfe7df;
+ border-radius:10px;background:white;color:#263329}
+.field textarea{min-height:130px;resize:vertical;line-height:1.5}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.colors{display:flex;gap:10px;flex-wrap:wrap}
-.color-dot{width:27px;height:27px;border-radius:50%;border:2px solid #ddd;cursor:pointer}
-.color-dot.selected{outline:2px solid var(--green);outline-offset:2px}
-.dialog-actions{display:flex;justify-content:space-between;gap:8px;margin-top:18px}
-.dialog-actions .right{display:flex;gap:8px}
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
-background:#25382b;color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;
-z-index:50;display:none;max-width:90%;text-align:center}
+.dialog-footer{display:flex;justify-content:space-between;gap:8px;margin-top:17px}
+.footer-right{display:flex;gap:8px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+ background:#26392d;color:white;padding:12px 17px;border-radius:11px;
+ z-index:50;display:none;font-size:13px;max-width:90%;text-align:center}
 .toast.show{display:block}
-.permission{background:#e8f5eb;border:1px solid #d2e9d8;border-radius:14px;padding:15px;
-display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
-.permission p{margin:4px 0 0;font-size:12px;color:#637066}
 .mobile-nav{display:none}
 @media(max-width:760px){
- header{padding:0 13px;height:60px;gap:9px}.brand{font-size:17px}.logo{width:32px;height:32px}
- .search{max-width:none}.search input{padding:11px 10px 11px 34px}.search span{left:11px;top:9px}
- .header-actions .desktop{display:none}
- aside{display:none}main{padding:22px 14px 100px}
- .topline{align-items:flex-start}.topline h1{font-size:22px}
- .notes{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
- .note{padding:13px;min-height:120px}.note h3{font-size:15px}
- .note-actions{opacity:1;flex-wrap:wrap}.note-actions button{padding:7px}
- .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;
- border-top:1px solid var(--line);justify-content:space-around;padding:8px 3px calc(8px + env(safe-area-inset-bottom));z-index:8}
- .mobile-nav button{border:0;background:transparent;color:#718074;font-size:10px;display:grid;gap:3px;justify-items:center}
- .mobile-nav button.active{color:var(--green);font-weight:700}
+ header{height:59px;padding:0 11px;gap:9px}
+ .brand{font-size:16px}.logo{width:31px;height:31px}
+ .search input{padding:10px 8px 10px 33px}.search span{top:8px;left:10px}
+ .header-buttons .desktop{display:none}
+ aside{display:none}
+ main{padding:21px 13px 100px}
+ h1{font-size:22px}
+ .cards{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:9px}
+ .card{padding:12px}.card h3{font-size:15px}
+ .actions button{padding:7px}
+ .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:8;
+ background:white;border-top:1px solid var(--line);justify-content:space-around;
+ padding:8px 3px calc(8px + env(safe-area-inset-bottom))}
+ .mobile-nav button{border:0;background:transparent;color:#718074;font-size:10px;
+ display:grid;gap:3px;justify-items:center}
+ .mobile-nav button.active{color:var(--green);font-weight:bold}
  .mobile-nav b{font-size:19px}
- .stats{gap:7px}.stat{padding:11px}.stat strong{font-size:19px}
- .permission{align-items:flex-start;flex-direction:column}
+ .stats{gap:7px}.stat{padding:10px}.stat strong{font-size:19px}
+ .banner{align-items:flex-start;flex-direction:column}
+ .heading{align-items:flex-start}
 }
 </style>
 </head>
 <body>
-<div class="app">
+
 <header>
-  <div class="brand"><div class="logo">✦</div><span>Evernote Lite</span></div>
-  <div class="search"><span>⌕</span><input id="search" placeholder="Search notes and tasks..."></div>
-  <div class="header-actions">
-    <button class="icon-btn desktop" onclick="exportData()" title="Backup">⇩</button>
-    <button class="icon-btn desktop" onclick="document.getElementById('importFile').click()" title="Restore">⇧</button>
-    <button class="icon-btn" onclick="showNotificationHelp()" title="Notifications">♧</button>
-  </div>
-  <input id="importFile" type="file" accept="application/json" hidden onchange="importData(event)">
+ <div class="brand"><div class="logo">✦</div>Evernote Lite</div>
+ <div class="search"><span>⌕</span><input id="search" type="search" placeholder="Search notes and tasks"></div>
+ <div class="header-buttons">
+  <button class="btn-icon desktop" data-action="export" title="Backup">⇩</button>
+  <button class="btn-icon desktop" data-action="import" title="Restore">⇧</button>
+  <button class="btn-icon" data-action="notifications" title="Notifications">♧</button>
+ </div>
+ <input id="importFile" type="file" accept=".json,application/json" hidden>
 </header>
 
 <div class="layout">
 <aside>
-  <div class="nav active" data-view="all" onclick="setView('all')">▦ All notes <span class="count" id="allCount"></span></div>
-  <div class="nav" data-view="notes" onclick="setView('notes')">▤ Notes</div>
-  <div class="nav" data-view="tasks" onclick="setView('tasks')">☑ Tasks</div>
-  <div class="nav" data-view="checklists" onclick="setView('checklists')">☷ Checklists</div>
-  <div class="side-label">ORGANIZE</div>
-  <div class="nav" data-view="pinned" onclick="setView('pinned')">📌 Pinned</div>
-  <div class="nav" data-view="archive" onclick="setView('archive')">▣ Archive</div>
-  <div class="nav" data-view="trash" onclick="setView('trash')">♲ Trash</div>
-  <div class="side-label">YOUR DATA</div>
-  <div class="nav" onclick="exportData()">⇩ Backup notes</div>
-  <div class="nav" onclick="document.getElementById('importFile').click()">⇧ Restore backup</div>
+ <button class="nav active" data-view="all">▦ All notes</button>
+ <button class="nav" data-view="notes">▤ Notes</button>
+ <button class="nav" data-view="tasks">☑ Tasks</button>
+ <button class="nav" data-view="checklists">☷ Checklists</button>
+ <div class="nav-label">ORGANISE</div>
+ <button class="nav" data-view="pinned">📌 Pinned</button>
+ <button class="nav" data-view="archive">▣ Archive</button>
+ <button class="nav" data-view="trash">♲ Trash</button>
+ <div class="nav-label">YOUR DATA</div>
+ <button class="nav" data-action="export">⇩ Backup notes</button>
+ <button class="nav" data-action="import">⇧ Restore backup</button>
 </aside>
 
 <main>
-  <div class="topline">
-    <div><h1 id="pageTitle">All notes</h1><div class="subtitle" id="pageSub">Your ideas, plans and reminders in one place.</div></div>
-    <button class="primary" onclick="openEditor()">＋ Create</button>
-  </div>
+ <div class="heading">
+  <div><h1 id="pageTitle">All notes</h1><div class="subtitle">Your ideas, plans and reminders.</div></div>
+  <button class="primary" data-action="new">＋ Create</button>
+ </div>
 
-  <div id="permissionBanner" class="permission" style="display:none">
-    <div><strong>Turn on reminders</strong><p>Allow notifications for due-date reminders while this app is active.</p></div>
-    <button class="primary" onclick="enableNotifications()">Enable</button>
-  </div>
+ <div class="banner" id="notificationBanner">
+  <div><strong>Enable reminders</strong><p>Allow notifications for reminders while the app is active.</p></div>
+  <button class="primary" data-action="enableNotifications">Enable</button>
+ </div>
 
-  <div class="stats" id="stats">
-    <div class="stat"><strong id="statNotes">0</strong><span>Notes</span></div>
-    <div class="stat"><strong id="statTasks">0</strong><span>Open tasks</span></div>
-    <div class="stat"><strong id="statDone">0</strong><span>Completed</span></div>
-  </div>
+ <div class="stats" id="stats">
+  <div class="stat"><strong id="noteCount">0</strong><span>Notes</span></div>
+  <div class="stat"><strong id="taskCount">0</strong><span>Open tasks</span></div>
+  <div class="stat"><strong id="doneCount">0</strong><span>Completed</span></div>
+ </div>
 
-  <div class="filters" id="filters">
-    <button class="chip active" data-filter="all" onclick="setFilter('all')">Everything</button>
-    <button class="chip" data-filter="today" onclick="setFilter('today')">Due today</button>
-    <button class="chip" data-filter="overdue" onclick="setFilter('overdue')">Overdue</button>
-    <button class="chip" data-filter="high" onclick="setFilter('high')">High priority</button>
-  </div>
-  <div class="notes" id="notes"></div>
+ <div class="filters" id="filters">
+  <button class="chip active" data-filter="all">Everything</button>
+  <button class="chip" data-filter="today">Due today</button>
+  <button class="chip" data-filter="overdue">Overdue</button>
+  <button class="chip" data-filter="high">High priority</button>
+ </div>
+
+ <section class="cards" id="cards" aria-live="polite"></section>
 </main>
 </div>
 
 <nav class="mobile-nav">
- <button class="active" data-view="all" onclick="setView('all')"><b>▦</b>All</button>
- <button data-view="notes" onclick="setView('notes')"><b>▤</b>Notes</button>
- <button data-view="tasks" onclick="setView('tasks')"><b>☑</b>Tasks</button>
- <button data-view="checklists" onclick="setView('checklists')"><b>☷</b>Lists</button>
- <button data-view="pinned" onclick="setView('pinned')"><b>📌</b>Pinned</button>
+ <button class="active" data-view="all"><b>▦</b>All</button>
+ <button data-view="notes"><b>▤</b>Notes</button>
+ <button data-view="tasks"><b>☑</b>Tasks</button>
+ <button data-view="checklists"><b>☷</b>Lists</button>
+ <button data-view="pinned"><b>📌</b>Pinned</button>
 </nav>
-</div>
 
-<div class="overlay" id="editor">
- <form class="dialog" id="noteForm" onsubmit="saveNote(event)">
-  <div class="dialog-head"><h2 id="editorTitle">Create note</h2><button type="button" class="close" onclick="closeEditor()">✕</button></div>
-  <input type="hidden" id="noteId">
-  <div class="field"><label>TYPE</label>
-   <select id="type" onchange="updateBodyHint()">
-    <option value="note">Note</option><option value="task">Task</option><option value="checklist">Checklist</option>
+<div class="overlay" id="editorOverlay">
+ <form class="dialog" id="editorForm">
+  <div class="dialog-head">
+   <h2 id="editorHeading">Create item</h2>
+   <button type="button" class="close" data-action="close">✕</button>
+  </div>
+  <input type="hidden" id="itemId">
+  <div class="field">
+   <label for="itemType">TYPE</label>
+   <select id="itemType">
+    <option value="note">Note</option>
+    <option value="task">Task</option>
+    <option value="checklist">Checklist</option>
    </select>
   </div>
-  <div class="field"><label>TITLE</label><input id="title" maxlength="120" placeholder="Title"></div>
-  <div class="field"><label id="bodyLabel">CONTENT</label><textarea id="body" placeholder="Write something..."></textarea></div>
-  <div class="two">
-   <div class="field"><label>DUE DATE</label><input type="date" id="due"></div>
-   <div class="field"><label>PRIORITY</label><select id="priority"><option value="normal">Normal</option><option value="low">Low</option><option value="high">High</option></select></div>
+  <div class="field">
+   <label for="itemTitle">TITLE</label>
+   <input id="itemTitle" maxlength="120" placeholder="Enter a title">
   </div>
-  <div class="field"><label>LABEL</label><input id="label" maxlength="30" placeholder="e.g. Personal, Work, Study"></div>
-  <div class="field"><label>COLOUR</label><div class="colors" id="colors"></div></div>
-  <div class="dialog-actions">
-   <button type="button" class="secondary" id="deleteButton" onclick="deleteCurrent()" style="display:none">Move to trash</button>
-   <div class="right"><button type="button" class="secondary" onclick="closeEditor()">Cancel</button><button class="primary" type="submit">Save</button></div>
+  <div class="field">
+   <label id="contentLabel" for="itemBody">CONTENT</label>
+   <textarea id="itemBody" placeholder="Write your note here..."></textarea>
+  </div>
+  <div class="two">
+   <div class="field"><label for="itemDue">DUE DATE</label><input id="itemDue" type="date"></div>
+   <div class="field"><label for="itemPriority">PRIORITY</label>
+    <select id="itemPriority"><option value="normal">Normal</option><option value="low">Low</option><option value="high">High</option></select>
+   </div>
+  </div>
+  <div class="field"><label for="itemLabel">LABEL</label><input id="itemLabel" maxlength="35" placeholder="Personal, Work, Study..."></div>
+  <div class="field"><label for="itemColor">COLOUR</label>
+   <select id="itemColor">
+    <option value="#ffffff">White</option>
+    <option value="#fff4c7">Yellow</option>
+    <option value="#fce1dc">Pink</option>
+    <option value="#e2f1ff">Blue</option>
+    <option value="#e5f4e8">Green</option>
+    <option value="#f0e5ff">Purple</option>
+   </select>
+  </div>
+  <div class="dialog-footer">
+   <button type="button" class="secondary" id="deleteButton" data-action="deleteCurrent" hidden>Move to trash</button>
+   <div class="footer-right">
+    <button type="button" class="secondary" data-action="close">Cancel</button>
+    <button type="submit" class="primary">Save</button>
+   </div>
   </div>
  </form>
 </div>
-<div class="toast" id="toast"></div>
+
+<div class="toast" id="toast" role="status"></div>
 
 <script>
-const DB_NAME='EvernoteLiteDB', STORE='items';
-let db,items=[],currentView='all',currentFilter='all',selectedColor='#ffffff';
-const palette=['#ffffff','#fff4c7','#fce1dc','#e2f1ff','#e5f4e8','#f0e5ff','#fce8f1'];
+(() => {
+'use strict';
 
-function openDB(){
- return new Promise((resolve,reject)=>{
-  const req=indexedDB.open(DB_NAME,1);
-  req.onupgradeneeded=()=>req.result.createObjectStore(STORE,{keyPath:'id'});
-  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+const DB_NAME = 'EvernoteLiteDB';
+const DB_VERSION = 1;
+const STORE = 'items';
+
+let db = null;
+let items = [];
+let currentView = 'all';
+let currentFilter = 'all';
+
+const $ = id => document.getElementById(id);
+
+function escapeHTML(value) {
+ return String(value ?? '').replace(/[&<>"']/g, char => ({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ }[char]));
+}
+
+function toast(message) {
+ const el = $('toast');
+ el.textContent = message;
+ el.classList.add('show');
+ clearTimeout(toast.timer);
+ toast.timer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+function openDatabase() {
+ return new Promise((resolve, reject) => {
+  const request = indexedDB.open(DB_NAME, DB_VERSION);
+  request.onupgradeneeded = () => {
+   if (!request.result.objectStoreNames.contains(STORE)) {
+    request.result.createObjectStore(STORE, {keyPath:'id'});
+   }
+  };
+  request.onsuccess = () => resolve(request.result);
+  request.onerror = () => reject(request.error);
  });
 }
-function dbGetAll(){
- return new Promise((resolve,reject)=>{
-  const req=db.transaction(STORE,'readonly').objectStore(STORE).getAll();
-  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+
+function getAll() {
+ return new Promise((resolve, reject) => {
+  const request = db.transaction(STORE,'readonly').objectStore(STORE).getAll();
+  request.onsuccess = () => resolve(request.result);
+  request.onerror = () => reject(request.error);
  });
 }
-function dbPut(item){
- return new Promise((resolve,reject)=>{
-  const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(item);
-  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+
+function put(item) {
+ return new Promise((resolve,reject) => {
+  const tx = db.transaction(STORE,'readwrite');
+  tx.objectStore(STORE).put(item);
+  tx.oncomplete = resolve;
+  tx.onerror = () => reject(tx.error);
  });
 }
-function dbDelete(id){
- return new Promise((resolve,reject)=>{
-  const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(id);
-  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+
+function removeFromDB(id) {
+ return new Promise((resolve,reject) => {
+  const tx = db.transaction(STORE,'readwrite');
+  tx.objectStore(STORE).delete(id);
+  tx.oncomplete = resolve;
+  tx.onerror = () => reject(tx.error);
  });
 }
-async function refresh(){
- items=await dbGetAll();render();
+
+function today() {
+ const d = new Date();
+ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function toast(msg){
- const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
- setTimeout(()=>el.classList.remove('show'),2400);
-}
-function setView(view){
- currentView=view;currentFilter='all';
- document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));
- document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter==='all'));
- const names={all:'All notes',notes:'Notes',tasks:'Tasks',checklists:'Checklists',pinned:'Pinned',archive:'Archive',trash:'Trash'};
- document.getElementById('pageTitle').textContent=names[view]||'Notes';
- document.getElementById('pageSub').textContent=view==='trash'?'Deleted items stay here until permanently deleted.':'Your ideas, plans and reminders in one place.';
- document.getElementById('stats').style.display=['all','notes'].includes(view)?'grid':'none';
- document.getElementById('filters').style.display=['all','tasks'].includes(view)?'flex':'none';
+
+async function reload() {
+ items = await getAll();
  render();
 }
-function setFilter(filter){
- currentFilter=filter;
- document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter===filter));
+
+function setView(view) {
+ currentView = view;
+ currentFilter = 'all';
+ document.querySelectorAll('[data-view]').forEach(button => {
+  button.classList.toggle('active',button.dataset.view === view);
+ });
+ document.querySelectorAll('[data-filter]').forEach(button => {
+  button.classList.toggle('active',button.dataset.filter === 'all');
+ });
+ const names = {
+  all:'All notes',notes:'Notes',tasks:'Tasks',checklists:'Checklists',
+  pinned:'Pinned',archive:'Archive',trash:'Trash'
+ };
+ $('pageTitle').textContent = names[view] || 'All notes';
+ $('stats').hidden = !['all','notes'].includes(view);
+ $('filters').hidden = !['all','tasks'].includes(view);
  render();
 }
-function render(){
- const active=items.filter(x=>!x.trashed&&!x.archived);
- const openTasks=active.filter(x=>x.type==='task'&&!x.done).length;
- const completed=active.filter(x=>(x.type==='task'&&x.done)||(x.type==='checklist'&&x.checks?.length&&x.checks.every(c=>c.done))).length;
- document.getElementById('statNotes').textContent=active.filter(x=>x.type==='note').length;
- document.getElementById('statTasks').textContent=openTasks;
- document.getElementById('statDone').textContent=completed;
- document.getElementById('allCount').textContent=active.length;
- const query=document.getElementById('search').value.toLowerCase().trim();
- let list=items.filter(x=>{
-  if(currentView==='trash')return x.trashed;
-  if(currentView==='archive')return x.archived&&!x.trashed;
-  if(x.trashed||x.archived)return false;
-  if(currentView==='notes'&&x.type!=='note')return false;
-  if(currentView==='tasks'&&x.type!=='task')return false;
-  if(currentView==='checklists'&&x.type!=='checklist')return false;
-  if(currentView==='pinned'&&!x.pinned)return false;
-  if(currentFilter==='today'&&x.due!==today())return false;
-  if(currentFilter==='overdue'&&(!x.due||x.due>=today()||x.done))return false;
-  if(currentFilter==='high'&&x.priority!=='high')return false;
-  const text=(x.title+' '+x.body+' '+(x.label||'')).toLowerCase();
-  return !query||text.includes(query);
+
+function setFilter(filter) {
+ currentFilter = filter;
+ document.querySelectorAll('[data-filter]').forEach(button => {
+  button.classList.toggle('active',button.dataset.filter === filter);
  });
- list.sort((a,b)=>(Number(b.pinned)-Number(a.pinned))||b.updatedAt-a.updatedAt);
- const root=document.getElementById('notes');
- if(!list.length){
-  root.innerHTML='<div class="empty"><div class="big">✧</div><h2>Nothing here yet</h2><p>Create a note, task or checklist to get started.</p></div>';return;
- }
- root.innerHTML=list.map(x=>{
-  const bg=x.color||'#fff';
-  let content='';
-  if(x.type==='checklist'){
-   content=(x.checks||[]).map((c,i)=>`<label class="check-row"><input type="checkbox" ${c.done?'checked':''} onchange="toggleCheck('${x.id}',${i})"><span class="${c.done?'done-text':''}">${esc(c.text)}</span></label>`).join('');
-  }else{
-   content=`<div class="note-body">${esc(x.body||'')}</div>`;
+ render();
+}
+
+function visibleItems() {
+ const query = $('search').value.toLowerCase().trim();
+
+ return items.filter(item => {
+  if (currentView === 'trash') {
+   if (!item.trashed) return false;
+  } else {
+   if (item.trashed) return false;
+   if (currentView === 'archive') {
+    if (!item.archived) return false;
+   } else {
+    if (item.archived) return false;
+    if (currentView === 'notes' && item.type !== 'note') return false;
+    if (currentView === 'tasks' && item.type !== 'task') return false;
+    if (currentView === 'checklists' && item.type !== 'checklist') return false;
+    if (currentView === 'pinned' && !item.pinned) return false;
+   }
   }
-  if(x.type==='task')content=`<label class="check-row"><input type="checkbox" ${x.done?'checked':''} onchange="toggleTask('${x.id}')"><span class="${x.done?'done-text':''}">${esc(x.body||'Mark this task complete')}</span></label>`;
-  const date=x.due?`📅 ${esc(x.due)}`:'';
-  const meta=[x.type,x.label?'#'+esc(x.label):'',date,x.priority==='high'?'⚑ High priority':''].filter(Boolean).join(' · ');
-  const actions=currentView==='trash'
-   ?`<button onclick="restoreItem('${x.id}')">Restore</button><button onclick="permanentDelete('${x.id}')">Delete forever</button>`
-   :`<button onclick="editItem('${x.id}')">Edit</button>
-     <button onclick="togglePin('${x.id}')">${x.pinned?'Unpin':'Pin'}</button>
-     <button onclick="archiveItem('${x.id}')">${x.archived?'Unarchive':'Archive'}</button>
-     <button onclick="moveTrash('${x.id}')">Trash</button>`;
-  return `<article class="note ${x.pinned?'pinned':''}" style="background:${bg}">
-   <button class="pin" onclick="togglePin('${x.id}')">${x.pinned?'📌':'♧'}</button>
-   <h3>${esc(x.title||'Untitled')}</h3>${content}
-   <div class="note-meta">${meta}</div><div class="note-actions">${actions}</div>
+
+  if (currentFilter === 'today' && item.due !== today()) return false;
+  if (currentFilter === 'overdue' &&
+      (!item.due || item.due >= today() || item.done)) return false;
+  if (currentFilter === 'high' && item.priority !== 'high') return false;
+
+  const content = (item.title+' '+item.body+' '+item.label+' '+
+   (item.checks||[]).map(c=>c.text).join(' ')).toLowerCase();
+  return !query || content.includes(query);
+ });
+}
+
+function render() {
+ const active = items.filter(x => !x.trashed && !x.archived);
+ $('noteCount').textContent = active.filter(x=>x.type==='note').length;
+ $('taskCount').textContent = active.filter(x=>x.type==='task'&&!x.done).length;
+ $('doneCount').textContent = active.filter(x=>
+  (x.type==='task'&&x.done) ||
+  (x.type==='checklist'&&x.checks?.length&&x.checks.every(c=>c.done))
+ ).length;
+
+ const list = visibleItems().sort((a,b)=>
+  Number(b.pinned)-Number(a.pinned) || b.updatedAt-a.updatedAt
+ );
+
+ if (!list.length) {
+  $('cards').innerHTML = '<div class="empty"><div style="font-size:42px">✧</div><strong>Nothing here yet</strong><span>Create a note, task or checklist to get started.</span></div>';
+  return;
+ }
+
+ $('cards').innerHTML = list.map(item => {
+  let content = '';
+
+  if (item.type === 'checklist') {
+   content = (item.checks||[]).map((check,index) =>
+    `<label class="check-item">
+      <input type="checkbox" data-action="checkItem" data-id="${escapeHTML(item.id)}" data-index="${index}" ${check.done?'checked':''}>
+      <span class="${check.done?'checked':''}">${escapeHTML(check.text)}</span>
+     </label>`
+   ).join('');
+  } else if (item.type === 'task') {
+   content = `<label class="check-item">
+    <input type="checkbox" data-action="toggleTask" data-id="${escapeHTML(item.id)}" ${item.done?'checked':''}>
+    <span class="${item.done?'checked':''}">${escapeHTML(item.body||'Complete this task')}</span>
+   </label>`;
+  } else {
+   content = `<div class="card-content">${escapeHTML(item.body||'')}</div>`;
+  }
+
+  const metadata = [
+   item.type,
+   item.label ? '#'+escapeHTML(item.label) : '',
+   item.due ? '📅 '+escapeHTML(item.due) : '',
+   item.priority==='high' ? '⚑ High priority' : ''
+  ].filter(Boolean).join(' · ');
+
+  let actions = '';
+  if (currentView === 'trash') {
+   actions = `<button data-action="restore" data-id="${escapeHTML(item.id)}">Restore</button>
+    <button data-action="permanentDelete" data-id="${escapeHTML(item.id)}">Delete forever</button>`;
+  } else {
+   actions = `<button data-action="edit" data-id="${escapeHTML(item.id)}">Edit</button>
+    <button data-action="pin" data-id="${escapeHTML(item.id)}">${item.pinned?'Unpin':'Pin'}</button>
+    <button data-action="archive" data-id="${escapeHTML(item.id)}">${item.archived?'Unarchive':'Archive'}</button>
+    <button data-action="trash" data-id="${escapeHTML(item.id)}">Trash</button>`;
+  }
+
+  return `<article class="card ${item.pinned?'pinned':''}" style="background:${escapeHTML(item.color||'#ffffff')}">
+   <div class="card-top"><h3>${escapeHTML(item.title||'Untitled')}</h3>
+    <button class="pin-button" data-action="pin" data-id="${escapeHTML(item.id)}" aria-label="Pin note">${item.pinned?'📌':'♧'}</button>
+   </div>
+   ${content}
+   <div class="meta">${metadata}</div>
+   <div class="actions">${actions}</div>
   </article>`;
  }).join('');
 }
-function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
-function openEditor(){
- document.getElementById('noteForm').reset();document.getElementById('noteId').value='';
- document.getElementById('editorTitle').textContent='Create new';
- document.getElementById('deleteButton').style.display='none';selectedColor='#ffffff';
- drawColors();updateBodyHint();document.getElementById('editor').classList.add('show');
+
+function openEditor(item=null) {
+ $('editorForm').reset();
+ $('itemId').value = item?.id || '';
+ $('itemType').value = item?.type || 'note';
+ $('itemTitle').value = item?.title || '';
+ $('itemBody').value = item?.type === 'checklist'
+  ? (item.checks||[]).map(c=>c.text).join('\n')
+  : item?.body || '';
+ $('itemDue').value = item?.due || '';
+ $('itemPriority').value = item?.priority || 'normal';
+ $('itemLabel').value = item?.label || '';
+ $('itemColor').value = item?.color || '#ffffff';
+ $('editorHeading').textContent = item ? 'Edit item' : 'Create item';
+ $('deleteButton').hidden = !item;
+ updateEditorHint();
+ $('editorOverlay').classList.add('open');
+ $('itemTitle').focus();
 }
-function closeEditor(){document.getElementById('editor').classList.remove('show');}
-function drawColors(){
- document.getElementById('colors').innerHTML=palette.map(c=>`<button type="button" class="color-dot ${c===selectedColor?'selected':''}" style="background:${c}" onclick="chooseColor('${c}')"></button>`).join('');
+
+function closeEditor() {
+ $('editorOverlay').classList.remove('open');
 }
-function chooseColor(c){selectedColor=c;drawColors();}
-function updateBodyHint(){
- const type=document.getElementById('type').value;
- document.getElementById('bodyLabel').textContent=type==='checklist'?'CHECKLIST ITEMS (ONE PER LINE)':type==='task'?'TASK DETAILS':'CONTENT';
- document.getElementById('body').placeholder=type==='checklist'?'Buy groceries\\nFinish assignment\\nCall someone':'Write something...';
+
+function updateEditorHint() {
+ const type = $('itemType').value;
+ $('contentLabel').textContent =
+  type==='checklist' ? 'CHECKLIST ITEMS — ONE PER LINE' :
+  type==='task' ? 'TASK DETAILS' : 'CONTENT';
+ $('itemBody').placeholder = type==='checklist'
+  ? 'Buy groceries\nFinish assignment\nCall someone'
+  : type==='task' ? 'Describe your task...' : 'Write your note here...';
 }
-function editItem(id){
- const x=items.find(i=>i.id===id);if(!x)return;
- document.getElementById('noteId').value=x.id;
- document.getElementById('title').value=x.title||'';
- document.getElementById('type').value=x.type;
- document.getElementById('body').value=x.type==='checklist'?(x.checks||[]).map(c=>c.text).join('\\n'):x.body||'';
- document.getElementById('due').value=x.due||'';
- document.getElementById('priority').value=x.priority||'normal';
- document.getElementById('label').value=x.label||'';
- selectedColor=x.color||'#ffffff';drawColors();updateBodyHint();
- document.getElementById('editorTitle').textContent='Edit item';
- document.getElementById('deleteButton').style.display=x.trashed?'none':'blo
+
+async function saveEditor(event) {
+ event.preventDefault();
+
+ const id = $('itemId').value || crypto.randomUUID();
+ const old = items.find(x=>x.id===id);
+ const type = $('itemType').value;
+ const body = $('itemBody').value.trim();
+
+ const checks = type==='checklist'
+  ? body.split('\n').map(t=>t.trim()).filter(Boolean).map(text=>{
+    const previous = old?.checks?.find(c=>
