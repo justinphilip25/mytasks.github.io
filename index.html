@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#635bdb">
+<title>My Tasks ✦</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5fb;
+  color: #222;
+  margin: 0;
+  padding: 20px;
+}
+main {
+  max-width: 550px;
+  margin: auto;
+}
+h1 { color: #635bdb; }
+.card {
+  background: white;
+  padding: 16px;
+  border-radius: 14px;
+  margin: 12px 0;
+}
+input, select, button {
+  padding: 12px;
+  border-radius: 9px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+}
+input {
+  width: 90%;
+  margin: 5px 0;
+}
+button {
+  background: #635bdb;
+  color: white;
+  border: 0;
+  cursor: pointer;
+}
+.task {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+.task span { flex: 1; overflow-wrap: anywhere; }
+.done {
+  text-decoration: line-through;
+  color: gray;
+}
+</style>
+</head>
+<body>
+<main>
+<h1>✦ My Tasks</h1>
+<p id="today"></p>
+
+<div class="card">
+<h3>My Progress</h3>
+<p id="progress">0 completed</p>
+</div>
+
+<div class="card">
+<h3>＋ Add a Task</h3>
+<input id="task" placeholder="Enter your task">
+<input id="date" type="date">
+<select id="priority">
+<option>Normal</option>
+<option>High</option>
+<option>Low</option>
+</select>
+<button onclick="addTask()">Add Task</button>
+</div>
+
+<div class="card">
+<h3>My Tasks</h3>
+<div id="list"></div>
+</div>
+</main>
+
+<script>
+let tasks = [];
+try {
+  tasks = JSON.parse(
+    localStorage.getItem("myTasks") || "[]"
+  );
+} catch(e) {}
+
+document.getElementById("today").textContent =
+  new Date().toDateString();
+
+function save() {
+  localStorage.setItem(
+    "myTasks",
+    JSON.stringify(tasks)
+  );
+  render();
+}
+
+function addTask() {
+  let name = document.getElementById("task").value.trim();
+
+  if (!name) {
+    alert("Enter a task first!");
+    return;
+  }
+
+  tasks.push({
+    name: name,
+    date: document.getElementById("date").value,
+    priority: document.getElementById("priority").value,
+    done: false
+  });
+
+  document.getElementById("task").value = "";
+  save();
+}
+
+function render() {
+  let list = document.getElementById("list");
+  list.innerHTML = "";
+
+  tasks.forEach((t, i) => {
+    let row = document.createElement("div");
+    row.className = "task";
+
+    let check = document.createElement("input");
+    check.type = "checkbox";
+    check.checked = t.done;
+    check.style.width = "20px";
+
+    check.onchange = () => {
+      t.done = check.checked;
+      save();
+    };
+
+    let info = document.createElement("span");
+    info.className = t.done ? "done" : "";
+
+    let name = document.createElement("b");
+    name.textContent = t.name;
+
+    let details = document.createElement("small");
+    details.textContent =
+      " " + (t.date ? "Due " + t.date + " · " : "") +
+      t.priority + " priority";
+
+    info.append(name, document.createElement("br"), details);
+
+    let del = document.createElement("button");
+    del.textContent = "×";
+    del.onclick = () => {
+      tasks.splice(i, 1);
+      save();
+    };
+
+    row.append(check, info, del);
+    list.append(row);
+  });
+
+  document.getElementById("progress").textContent =
+    tasks.filter(t => t.done).length +
+    " of " + tasks.length + " completed";
+}
+
+render();
+</script>
+</body>
+</html>
