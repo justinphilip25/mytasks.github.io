@@ -4,920 +4,338 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#188038">
-<title>My Notes & Tasks</title>
-
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="A free notes, tasks and checklist app.">
+<title>Evernote Lite — Notes & Tasks</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>
-:root {
-  --green: #188038;
-  --green-light: #e8f5e9;
-  --bg: #f8faf8;
-  --text: #202124;
-  --muted: #777;
-  --border: #e5e8e5;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-}
-
-button, input, textarea, select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-.app {
-  min-height: 100vh;
-}
-
-/* HEADER */
-
-header {
-  height: 70px;
-  background: white;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 0 22px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.logo {
-  font-size: 21px;
-  font-weight: bold;
-  color: var(--green);
-  white-space: nowrap;
-}
-
-.search {
-  flex: 1;
-  max-width: 650px;
-  margin: auto;
-}
-
-.search input {
-  width: 100%;
-  padding: 13px 18px;
-  border: 0;
-  outline: none;
-  background: #f1f3f1;
-  border-radius: 12px;
-}
-
-.header-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.icon-btn {
-  border: 0;
-  background: transparent;
-  padding: 10px;
-  border-radius: 50%;
-  font-size: 19px;
-}
-
-.icon-btn:hover {
-  background: var(--green-light);
-}
-
-/* LAYOUT */
-
-.layout {
-  display: flex;
-}
-
-.sidebar {
-  width: 230px;
-  padding: 22px 12px;
-  flex-shrink: 0;
-}
-
-.nav-btn {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  text-align: left;
-  padding: 13px 18px;
-  border-radius: 0 30px 30px 0;
-  margin-bottom: 5px;
-  color: #444;
-}
-
-.nav-btn.active,
-.nav-btn:hover {
-  background: var(--green-light);
-  color: var(--green);
-  font-weight: bold;
-}
-
-.main {
-  flex: 1;
-  padding: 28px;
-  min-width: 0;
-}
-
-.page-title {
-  font-size: 23px;
-  margin: 0 0 20px;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 25px;
-}
-
-.stat {
-  background: white;
-  padding: 18px;
-  border-radius: 15px;
-  border: 1px solid var(--border);
-}
-
-.stat strong {
-  display: block;
-  font-size: 25px;
-  color: var(--green);
-  margin-top: 8px;
-}
-
-.add-area {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 25px;
-}
-
-.primary-btn {
-  border: 0;
-  background: var(--green);
-  color: white;
-  border-radius: 12px;
-  padding: 13px 19px;
-  font-weight: bold;
-}
-
-.secondary-btn {
-  border: 1px solid var(--border);
-  background: white;
-  border-radius: 12px;
-  padding: 12px 17px;
-}
-
-.primary-btn:hover {
-  background: #126b2c;
-}
-
-.notes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 16px;
-}
-
-.note-card {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  padding: 17px;
-  min-height: 155px;
-  position: relative;
-  cursor: pointer;
-  transition: .15s;
-  overflow-wrap: anywhere;
-}
-
-.note-card:hover {
-  box-shadow: 0 4px 15px #00000012;
-  transform: translateY(-2px);
-}
-
-.note-card h3 {
-  margin: 0 30px 10px 0;
-  font-size: 17px;
-}
-
-.note-card p {
-  color: #555;
-  white-space: pre-wrap;
-  line-height: 1.5;
-  margin: 0 0 12px;
-}
-
-.note-meta {
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 12px;
-}
-
-.pin {
-  position: absolute;
-  right: 12px;
-  top: 10px;
-  border: 0;
-  background: transparent;
-  font-size: 18px;
-}
-
-.card-actions {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
-.card-actions button {
-  border: 0;
-  background: #f1f4f1;
-  padding: 7px 9px;
-  border-radius: 8px;
-  font-size: 12px;
-}
-
-.card-actions button:hover {
-  background: var(--green-light);
-}
-
-.empty {
-  text-align: center;
-  color: var(--muted);
-  padding: 60px 15px;
-}
-
-/* EDITOR */
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: #0007;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 15px;
-  z-index: 50;
-}
-
-.overlay.show {
-  display: flex;
-}
-
-.editor {
-  background: white;
-  width: min(100%, 520px);
-  max-height: 90vh;
-  overflow-y: auto;
-  border-radius: 20px;
-  padding: 23px;
-}
-
-.editor h2 {
-  margin-top: 0;
-}
-
-.editor input,
-.editor textarea,
-.editor select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  margin: 7px 0 13px;
-  outline-color: var(--green);
-  background: white;
-}
-
-.editor textarea {
-  min-height: 130px;
-  resize: vertical;
-}
-
-.editor label {
-  font-size: 13px;
-  font-weight: bold;
-  color: #555;
-}
-
-.editor-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  margin-top: 15px;
-}
-
-.color-options {
-  display: flex;
-  gap: 10px;
-  margin: 8px 0 15px;
-}
-
-.color-dot {
-  width: 29px;
-  height: 29px;
-  border: 2px solid #ddd;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.color-dot.selected {
-  border: 3px solid var(--green);
-}
-
-/* CHECKLIST */
-
-.check-row {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin: 9px 0;
-}
-
-.check-row input {
-  width: auto;
-  margin: 0;
-}
-
-.check-row span.done {
-  text-decoration: line-through;
-  color: #888;
-}
-
-.check-input-row {
-  display: flex;
-  gap: 8px;
-}
-
-.check-input-row input {
-  flex: 1;
-}
-
-/* NOTIFICATION POPUP */
-
-.notification-popup {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: #0008;
-}
-
-.notification-popup[hidden] {
-  display: none;
-}
-
-.notification-card {
-  width: min(100%, 370px);
-  padding: 27px;
-  border-radius: 23px;
-  background: white;
-  text-align: center;
-  box-shadow: 0 12px 40px #0003;
-}
-
-.notification-icon {
-  font-size: 43px;
-}
-
-.notification-card h2 {
-  color: var(--green);
-  margin-bottom: 10px;
-}
-
-.notification-card p {
-  color: #666;
-  line-height: 1.5;
-}
-
-.notification-card button {
-  width: 100%;
-  padding: 13px;
-  margin-top: 10px;
-  border: 0;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-#enableNotifications {
-  background: var(--green);
-  color: white;
-}
-
-#laterNotifications {
-  background: var(--green-light);
-  color: var(--green);
-}
-
-#notificationMessage {
-  font-size: 13px;
-}
-
-/* MOBILE */
-
-.mobile-nav {
-  display: none;
-}
-
-@media(max-width: 700px) {
-  header {
-    padding: 0 12px;
-    gap: 8px;
-    height: 62px;
-  }
-
-  .logo {
-    font-size: 17px;
-  }
-
-  .sidebar {
-    display: none;
-  }
-
-  .main {
-    padding: 19px 14px 90px;
-  }
-
-  .stats {
-    gap: 8px;
-  }
-
-  .stat {
-    padding: 12px;
-    font-size: 12px;
-  }
-
-  .stat strong {
-    font-size: 21px;
-  }
-
-  .notes-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .note-card {
-    padding: 13px;
-    min-height: 145px;
-  }
-
-  .note-card h3 {
-    font-size: 15px;
-  }
-
-  .note-card p {
-    font-size: 13px;
-  }
-
-  .mobile-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 20;
-    background: white;
-    border-top: 1px solid var(--border);
-    justify-content: space-around;
-    padding: 8px 3px;
-  }
-
-  .mobile-nav button {
-    background: transparent;
-    border: 0;
-    color: #666;
-    font-size: 11px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-  }
-
-  .mobile-nav button.active {
-    color: var(--green);
-    font-weight: bold;
-  }
-}
-
-@media(max-width: 370px) {
-  .notes-grid {
-    grid-template-columns: 1fr;
-  }
+:root{
+  --green:#16865b;--green-dark:#106b48;--bg:#f6f8f6;
+  --surface:#fff;--text:#202820;--muted:#778078;
+  --line:#e8ede8;--shadow:0 5px 22px #183b2410;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh}
+header{height:68px;background:#fff;border-bottom:1px solid var(--line);
+display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;white-space:nowrap}
+.logo{width:36px;height:36px;border-radius:12px;background:var(--green);color:white;
+display:grid;place-items:center;font-size:21px}
+.search{max-width:620px;flex:1;margin:auto;position:relative}
+.search input{width:100%;border:0;background:#f1f5f1;border-radius:13px;padding:13px 16px 13px 42px;outline:none}
+.search span{position:absolute;left:15px;top:11px;color:var(--muted)}
+.header-actions{display:flex;gap:8px}
+.icon-btn{border:0;background:#f2f5f2;border-radius:11px;padding:10px 12px;color:#405044}
+.icon-btn:hover{background:#e6f2e9}
+.layout{display:flex;max-width:1500px;margin:auto}
+aside{width:225px;padding:24px 14px;flex-shrink:0}
+.nav{display:flex;align-items:center;gap:13px;padding:13px 16px;border-radius:0 25px 25px 0;
+color:#536056;cursor:pointer;margin:4px 0;font-size:14px}
+.nav.active,.nav:hover{background:#e2f2e7;color:var(--green-dark);font-weight:700}
+.nav .count{margin-left:auto;font-size:12px;color:var(--muted)}
+.side-label{font-size:11px;color:#9aa39b;font-weight:700;letter-spacing:1px;margin:25px 16px 8px}
+main{flex:1;min-width:0;padding:30px 28px 90px}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+h1{font-size:25px;margin:0 0 5px}
+.subtitle{font-size:13px;color:var(--muted)}
+.primary{background:var(--green);color:white;border:0;border-radius:12px;padding:12px 18px;font-weight:700}
+.primary:hover{background:var(--green-dark)}
+.secondary{background:white;border:1px solid var(--line);border-radius:11px;padding:10px 13px;color:#465348}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.chip{border:1px solid var(--line);background:#fff;color:#657067;border-radius:20px;padding:8px 14px;font-size:12px}
+.chip.active{background:#e2f2e7;color:var(--green-dark);border-color:#c7e4d0;font-weight:700}
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:15px;align-items:start}
+.note{background:white;border:1px solid var(--line);border-radius:15px;padding:16px;
+box-shadow:var(--shadow);position:relative;min-height:135px;overflow:hidden}
+.note:hover{border-color:#b8d8c1}
+.note.pinned{border-top:3px solid var(--green)}
+.note h3{font-size:16px;margin:0 25px 9px 0;overflow-wrap:anywhere}
+.note-body{font-size:13px;line-height:1.55;color:#58635a;white-space:pre-wrap;overflow-wrap:anywhere}
+.pin{position:absolute;right:13px;top:12px;border:0;background:transparent;color:#879188}
+.note-meta{font-size:11px;color:#89948b;margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.note-actions{display:flex;gap:5px;margin-top:13px;opacity:.75}
+.note-actions button{border:0;background:#f2f5f2;border-radius:8px;padding:7px 9px;color:#59645b;font-size:12px}
+.note-actions button:hover{background:#e2f2e7;color:var(--green-dark)}
+.check-row{display:flex;gap:8px;align-items:flex-start;margin:7px 0;font-size:13px;color:#59635b}
+.check-row input{accent-color:var(--green);margin-top:3px}
+.done-text{text-decoration:line-through;color:#a0aaa1}
+.empty{grid-column:1/-1;text-align:center;padding:75px 15px;color:var(--muted)}
+.empty .big{font-size:42px;margin-bottom:12px}
+.empty h2{font-size:18px;color:#455047}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:23px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}
+.stat strong{display:block;font-size:23px;color:var(--green)}
+.stat span{font-size:12px;color:var(--muted)}
+.overlay{position:fixed;inset:0;background:#15251bb0;z-index:20;display:none;
+align-items:center;justify-content:center;padding:15px}
+.overlay.show{display:flex}
+.dialog{width:min(560px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:19px;padding:22px;box-shadow:0 20px 70px #0003}
+.dialog-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
+.dialog-head h2{margin:0;font-size:20px}
+.close{border:0;background:#f1f4f1;border-radius:50%;width:34px;height:34px}
+.field{margin:12px 0}
+.field label{display:block;font-size:12px;font-weight:700;color:#657067;margin-bottom:7px}
+.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #dfe7df;border-radius:10px;outline:none;background:#fff}
+.field input:focus,.field textarea:focus{border-color:var(--green)}
+.field textarea{min-height:130px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.colors{display:flex;gap:10px;flex-wrap:wrap}
+.color-dot{width:27px;height:27px;border-radius:50%;border:2px solid #ddd;cursor:pointer}
+.color-dot.selected{outline:2px solid var(--green);outline-offset:2px}
+.dialog-actions{display:flex;justify-content:space-between;gap:8px;margin-top:18px}
+.dialog-actions .right{display:flex;gap:8px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+background:#25382b;color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;
+z-index:50;display:none;max-width:90%;text-align:center}
+.toast.show{display:block}
+.permission{background:#e8f5eb;border:1px solid #d2e9d8;border-radius:14px;padding:15px;
+display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.permission p{margin:4px 0 0;font-size:12px;color:#637066}
+.mobile-nav{display:none}
+@media(max-width:760px){
+ header{padding:0 13px;height:60px;gap:9px}.brand{font-size:17px}.logo{width:32px;height:32px}
+ .search{max-width:none}.search input{padding:11px 10px 11px 34px}.search span{left:11px;top:9px}
+ .header-actions .desktop{display:none}
+ aside{display:none}main{padding:22px 14px 100px}
+ .topline{align-items:flex-start}.topline h1{font-size:22px}
+ .notes{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
+ .note{padding:13px;min-height:120px}.note h3{font-size:15px}
+ .note-actions{opacity:1;flex-wrap:wrap}.note-actions button{padding:7px}
+ .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;
+ border-top:1px solid var(--line);justify-content:space-around;padding:8px 3px calc(8px + env(safe-area-inset-bottom));z-index:8}
+ .mobile-nav button{border:0;background:transparent;color:#718074;font-size:10px;display:grid;gap:3px;justify-items:center}
+ .mobile-nav button.active{color:var(--green);font-weight:700}
+ .mobile-nav b{font-size:19px}
+ .stats{gap:7px}.stat{padding:11px}.stat strong{font-size:19px}
+ .permission{align-items:flex-start;flex-direction:column}
 }
 </style>
 </head>
-
 <body>
 <div class="app">
-
 <header>
-  <div class="logo">✦ My Notes</div>
-
-  <div class="search">
-    <input id="searchInput" placeholder="Search notes and tasks...">
-  </div>
-
+  <div class="brand"><div class="logo">✦</div><span>Evernote Lite</span></div>
+  <div class="search"><span>⌕</span><input id="search" placeholder="Search notes and tasks..."></div>
   <div class="header-actions">
-    <button class="icon-btn" onclick="openNotificationSettings()" title="Notifications">🔔</button>
-    <button class="icon-btn" onclick="openSettings()" title="Settings">⚙️</button>
+    <button class="icon-btn desktop" onclick="exportData()" title="Backup">⇩</button>
+    <button class="icon-btn desktop" onclick="document.getElementById('importFile').click()" title="Restore">⇧</button>
+    <button class="icon-btn" onclick="showNotificationHelp()" title="Notifications">♧</button>
   </div>
+  <input id="importFile" type="file" accept="application/json" hidden onchange="importData(event)">
 </header>
 
 <div class="layout">
-
-<aside class="sidebar">
-  <button class="nav-btn active" data-view="all" onclick="changeView('all')">🏠 All items</button>
-  <button class="nav-btn" data-view="notes" onclick="changeView('notes')">📝 Notes</button>
-  <button class="nav-btn" data-view="tasks" onclick="changeView('tasks')">☑️ Tasks</button>
-  <button class="nav-btn" data-view="checklists" onclick="changeView('checklists')">📋 Checklists</button>
-  <button class="nav-btn" data-view="pinned" onclick="changeView('pinned')">📌 Pinned</button>
-  <button class="nav-btn" data-view="archive" onclick="changeView('archive')">📦 Archive</button>
-  <button class="nav-btn" data-view="trash" onclick="changeView('trash')">🗑️ Trash</button>
+<aside>
+  <div class="nav active" data-view="all" onclick="setView('all')">▦ All notes <span class="count" id="allCount"></span></div>
+  <div class="nav" data-view="notes" onclick="setView('notes')">▤ Notes</div>
+  <div class="nav" data-view="tasks" onclick="setView('tasks')">☑ Tasks</div>
+  <div class="nav" data-view="checklists" onclick="setView('checklists')">☷ Checklists</div>
+  <div class="side-label">ORGANIZE</div>
+  <div class="nav" data-view="pinned" onclick="setView('pinned')">📌 Pinned</div>
+  <div class="nav" data-view="archive" onclick="setView('archive')">▣ Archive</div>
+  <div class="nav" data-view="trash" onclick="setView('trash')">♲ Trash</div>
+  <div class="side-label">YOUR DATA</div>
+  <div class="nav" onclick="exportData()">⇩ Backup notes</div>
+  <div class="nav" onclick="document.getElementById('importFile').click()">⇧ Restore backup</div>
 </aside>
 
-<main class="main">
-  <h1 class="page-title" id="pageTitle">All items</h1>
-
-  <div class="stats">
-    <div class="stat">Total items<strong id="totalCount">0</strong></div>
-    <div class="stat">Pending tasks<strong id="pendingCount">0</strong></div>
-    <div class="stat">Completed<strong id="completedCount">0</strong></div>
+<main>
+  <div class="topline">
+    <div><h1 id="pageTitle">All notes</h1><div class="subtitle" id="pageSub">Your ideas, plans and reminders in one place.</div></div>
+    <button class="primary" onclick="openEditor()">＋ Create</button>
   </div>
 
-  <div class="add-area">
-    <button class="primary-btn" onclick="openEditor('note')">＋ New note</button>
-    <button class="secondary-btn" onclick="openEditor('task')">☑ New task</button>
-    <button class="secondary-btn" onclick="openEditor('checklist')">☷ Checklist</button>
+  <div id="permissionBanner" class="permission" style="display:none">
+    <div><strong>Turn on reminders</strong><p>Allow notifications for due-date reminders while this app is active.</p></div>
+    <button class="primary" onclick="enableNotifications()">Enable</button>
   </div>
 
-  <div class="notes-grid" id="itemsGrid"></div>
+  <div class="stats" id="stats">
+    <div class="stat"><strong id="statNotes">0</strong><span>Notes</span></div>
+    <div class="stat"><strong id="statTasks">0</strong><span>Open tasks</span></div>
+    <div class="stat"><strong id="statDone">0</strong><span>Completed</span></div>
+  </div>
+
+  <div class="filters" id="filters">
+    <button class="chip active" data-filter="all" onclick="setFilter('all')">Everything</button>
+    <button class="chip" data-filter="today" onclick="setFilter('today')">Due today</button>
+    <button class="chip" data-filter="overdue" onclick="setFilter('overdue')">Overdue</button>
+    <button class="chip" data-filter="high" onclick="setFilter('high')">High priority</button>
+  </div>
+  <div class="notes" id="notes"></div>
 </main>
 </div>
 
 <nav class="mobile-nav">
-  <button class="active" data-view="all" onclick="changeView('all')">🏠<span>Home</span></button>
-  <button data-view="notes" onclick="changeView('notes')">📝<span>Notes</span></button>
-  <button data-view="tasks" onclick="changeView('tasks')">☑️<span>Tasks</span></button>
-  <button data-view="pinned" onclick="changeView('pinned')">📌<span>Pinned</span></button>
-  <button data-view="archive" onclick="changeView('archive')">📦<span>Archive</span></button>
+ <button class="active" data-view="all" onclick="setView('all')"><b>▦</b>All</button>
+ <button data-view="notes" onclick="setView('notes')"><b>▤</b>Notes</button>
+ <button data-view="tasks" onclick="setView('tasks')"><b>☑</b>Tasks</button>
+ <button data-view="checklists" onclick="setView('checklists')"><b>☷</b>Lists</button>
+ <button data-view="pinned" onclick="setView('pinned')"><b>📌</b>Pinned</button>
 </nav>
 </div>
 
-<!-- EDITOR -->
-
-<div class="overlay" id="editorOverlay">
-  <div class="editor">
-    <h2 id="editorHeading">Create item</h2>
-
-    <label>Title</label>
-    <input id="itemTitle" placeholder="Enter title">
-
-    <div id="bodySection">
-      <label>Details</label>
-      <textarea id="itemBody" placeholder="Write something..."></textarea>
-    </div>
-
-    <div id="checklistSection" hidden>
-      <label>Checklist items</label>
-      <div id="checklistEditor"></div>
-      <div class="check-input-row">
-        <input id="newCheckItem" placeholder="Add checklist item">
-        <button class="secondary-btn" onclick="addChecklistItem()">＋</button>
-      </div>
-    </div>
-
-    <div id="taskFields">
-      <label>Due date</label>
-      <input id="itemDue" type="date">
-
-      <label>Priority</label>
-      <select id="itemPriority">
-        <option value="normal">Normal</option>
-        <option value="high">High</option>
-        <option value="urgent">Urgent</option>
-      </select>
-    </div>
-
-    <label>Label</label>
-    <input id="itemLabel" placeholder="Example: Personal, Work, Study">
-
-    <label>Colour</label>
-    <div class="color-options" id="colorOptions">
-      <button class="color-dot selected" style="background:#ffffff" data-color="#ffffff"></button>
-      <button class="color-dot" style="background:#e8f5e9" data-color="#e8f5e9"></button>
-      <button class="color-dot" style="background:#fff3cd" data-color="#fff3cd"></button>
-      <button class="color-dot" style="background:#fce4ec" data-color="#fce4ec"></button>
-      <button class="color-dot" style="background:#e3f2fd" data-color="#e3f2fd"></button>
-      <button class="color-dot" style="background:#ede7f6" data-color="#ede7f6"></button>
-    </div>
-
-    <div class="editor-actions">
-      <button class="secondary-btn" onclick="closeEditor()">Cancel</button>
-      <button class="primary-btn" onclick="saveItem()">Save</button>
-    </div>
+<div class="overlay" id="editor">
+ <form class="dialog" id="noteForm" onsubmit="saveNote(event)">
+  <div class="dialog-head"><h2 id="editorTitle">Create note</h2><button type="button" class="close" onclick="closeEditor()">✕</button></div>
+  <input type="hidden" id="noteId">
+  <div class="field"><label>TYPE</label>
+   <select id="type" onchange="updateBodyHint()">
+    <option value="note">Note</option><option value="task">Task</option><option value="checklist">Checklist</option>
+   </select>
   </div>
-</div>
-
-<!-- NOTIFICATION POPUP -->
-
-<div id="notificationPopup" class="notification-popup" hidden>
-  <div class="notification-card">
-    <div class="notification-icon">🔔</div>
-    <h2>Never miss a task!</h2>
-    <p>
-      Allow notifications to receive reminders about upcoming
-      and overdue tasks.
-    </p>
-    <button id="enableNotifications">Enable Notifications</button>
-    <button id="laterNotifications">Not Now</button>
-    <p id="notificationMessage" aria-live="polite"></p>
+  <div class="field"><label>TITLE</label><input id="title" maxlength="120" placeholder="Title"></div>
+  <div class="field"><label id="bodyLabel">CONTENT</label><textarea id="body" placeholder="Write something..."></textarea></div>
+  <div class="two">
+   <div class="field"><label>DUE DATE</label><input type="date" id="due"></div>
+   <div class="field"><label>PRIORITY</label><select id="priority"><option value="normal">Normal</option><option value="low">Low</option><option value="high">High</option></select></div>
   </div>
-</div>
-
-<!-- SETTINGS POPUP -->
-
-<div class="overlay" id="settingsOverlay">
-  <div class="editor">
-    <h2>Settings</h2>
-    <p>Manage your app preferences.</p>
-    <button class="secondary-btn" style="width:100%;margin-bottom:10px" onclick="openNotificationSettings()">🔔 Notification settings</button>
-    <button class="secondary-btn" style="width:100%;margin-bottom:10px" onclick="exportData()">⬇ Export my data</button>
-    <button class="secondary-btn" style="width:100%;margin-bottom:10px" onclick="document.getElementById('importFile').click()">⬆ Import data</button>
-    <input id="importFile" type="file" accept=".json,application/json" hidden onchange="importData(event)">
-    <button class="primary-btn" style="width:100%" onclick="document.getElementById('settingsOverlay').classList.remove('show')">Close</button>
+  <div class="field"><label>LABEL</label><input id="label" maxlength="30" placeholder="e.g. Personal, Work, Study"></div>
+  <div class="field"><label>COLOUR</label><div class="colors" id="colors"></div></div>
+  <div class="dialog-actions">
+   <button type="button" class="secondary" id="deleteButton" onclick="deleteCurrent()" style="display:none">Move to trash</button>
+   <div class="right"><button type="button" class="secondary" onclick="closeEditor()">Cancel</button><button class="primary" type="submit">Save</button></div>
   </div>
+ </form>
 </div>
+<div class="toast" id="toast"></div>
 
 <script>
-/* STORAGE */
+const DB_NAME='EvernoteLiteDB', STORE='items';
+let db,items=[],currentView='all',currentFilter='all',selectedColor='#ffffff';
+const palette=['#ffffff','#fff4c7','#fce1dc','#e2f1ff','#e5f4e8','#f0e5ff','#fce8f1'];
 
-const STORAGE_KEY = "myNotesTasks_v1";
-const SETTINGS_KEY = "myNotesSettings_v1";
-
-let items = [];
-let currentView = "all";
-let editingId = null;
-let editorType = "note";
-let selectedColor = "#ffffff";
-let checklistDraft = [];
-
-function loadItems() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-
-    if (saved) {
-      items = JSON.parse(saved);
-    } else {
-      // Import older task data if available
-      const oldData = localStorage.getItem("myTasks");
-
-      if (oldData) {
-        const oldItems = JSON.parse(oldData);
-
-        if (Array.isArray(oldItems)) {
-          items = oldItems.map(x => ({
-            id: crypto.randomUUID(),
-            type: "task",
-            title: x.title || x.name || "Untitled task",
-            body: x.description || "",
-            due: x.due || "",
-            priority: "normal",
-            label: "",
-            color: "#ffffff",
-            completed: !!x.completed,
-            pinned: false,
-            archived: false,
-            trashed: false,
-            created: Date.now()
-          }));
-        }
-      }
-    }
-  } catch (error) {
-    console.error("Unable to load saved data", error);
-    items = [];
+function openDB(){
+ return new Promise((resolve,reject)=>{
+  const req=indexedDB.open(DB_NAME,1);
+  req.onupgradeneeded=()=>req.result.createObjectStore(STORE,{keyPath:'id'});
+  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+ });
+}
+function dbGetAll(){
+ return new Promise((resolve,reject)=>{
+  const req=db.transaction(STORE,'readonly').objectStore(STORE).getAll();
+  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+ });
+}
+function dbPut(item){
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(item);
+  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+ });
+}
+function dbDelete(id){
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(id);
+  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+ });
+}
+async function refresh(){
+ items=await dbGetAll();render();
+}
+function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function toast(msg){
+ const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+ setTimeout(()=>el.classList.remove('show'),2400);
+}
+function setView(view){
+ currentView=view;currentFilter='all';
+ document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===view));
+ document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter==='all'));
+ const names={all:'All notes',notes:'Notes',tasks:'Tasks',checklists:'Checklists',pinned:'Pinned',archive:'Archive',trash:'Trash'};
+ document.getElementById('pageTitle').textContent=names[view]||'Notes';
+ document.getElementById('pageSub').textContent=view==='trash'?'Deleted items stay here until permanently deleted.':'Your ideas, plans and reminders in one place.';
+ document.getElementById('stats').style.display=['all','notes'].includes(view)?'grid':'none';
+ document.getElementById('filters').style.display=['all','tasks'].includes(view)?'flex':'none';
+ render();
+}
+function setFilter(filter){
+ currentFilter=filter;
+ document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter===filter));
+ render();
+}
+function render(){
+ const active=items.filter(x=>!x.trashed&&!x.archived);
+ const openTasks=active.filter(x=>x.type==='task'&&!x.done).length;
+ const completed=active.filter(x=>(x.type==='task'&&x.done)||(x.type==='checklist'&&x.checks?.length&&x.checks.every(c=>c.done))).length;
+ document.getElementById('statNotes').textContent=active.filter(x=>x.type==='note').length;
+ document.getElementById('statTasks').textContent=openTasks;
+ document.getElementById('statDone').textContent=completed;
+ document.getElementById('allCount').textContent=active.length;
+ const query=document.getElementById('search').value.toLowerCase().trim();
+ let list=items.filter(x=>{
+  if(currentView==='trash')return x.trashed;
+  if(currentView==='archive')return x.archived&&!x.trashed;
+  if(x.trashed||x.archived)return false;
+  if(currentView==='notes'&&x.type!=='note')return false;
+  if(currentView==='tasks'&&x.type!=='task')return false;
+  if(currentView==='checklists'&&x.type!=='checklist')return false;
+  if(currentView==='pinned'&&!x.pinned)return false;
+  if(currentFilter==='today'&&x.due!==today())return false;
+  if(currentFilter==='overdue'&&(!x.due||x.due>=today()||x.done))return false;
+  if(currentFilter==='high'&&x.priority!=='high')return false;
+  const text=(x.title+' '+x.body+' '+(x.label||'')).toLowerCase();
+  return !query||text.includes(query);
+ });
+ list.sort((a,b)=>(Number(b.pinned)-Number(a.pinned))||b.updatedAt-a.updatedAt);
+ const root=document.getElementById('notes');
+ if(!list.length){
+  root.innerHTML='<div class="empty"><div class="big">✧</div><h2>Nothing here yet</h2><p>Create a note, task or checklist to get started.</p></div>';return;
+ }
+ root.innerHTML=list.map(x=>{
+  const bg=x.color||'#fff';
+  let content='';
+  if(x.type==='checklist'){
+   content=(x.checks||[]).map((c,i)=>`<label class="check-row"><input type="checkbox" ${c.done?'checked':''} onchange="toggleCheck('${x.id}',${i})"><span class="${c.done?'done-text':''}">${esc(c.text)}</span></label>`).join('');
+  }else{
+   content=`<div class="note-body">${esc(x.body||'')}</div>`;
   }
-
-  saveItems();
+  if(x.type==='task')content=`<label class="check-row"><input type="checkbox" ${x.done?'checked':''} onchange="toggleTask('${x.id}')"><span class="${x.done?'done-text':''}">${esc(x.body||'Mark this task complete')}</span></label>`;
+  const date=x.due?`📅 ${esc(x.due)}`:'';
+  const meta=[x.type,x.label?'#'+esc(x.label):'',date,x.priority==='high'?'⚑ High priority':''].filter(Boolean).join(' · ');
+  const actions=currentView==='trash'
+   ?`<button onclick="restoreItem('${x.id}')">Restore</button><button onclick="permanentDelete('${x.id}')">Delete forever</button>`
+   :`<button onclick="editItem('${x.id}')">Edit</button>
+     <button onclick="togglePin('${x.id}')">${x.pinned?'Unpin':'Pin'}</button>
+     <button onclick="archiveItem('${x.id}')">${x.archived?'Unarchive':'Archive'}</button>
+     <button onclick="moveTrash('${x.id}')">Trash</button>`;
+  return `<article class="note ${x.pinned?'pinned':''}" style="background:${bg}">
+   <button class="pin" onclick="togglePin('${x.id}')">${x.pinned?'📌':'♧'}</button>
+   <h3>${esc(x.title||'Untitled')}</h3>${content}
+   <div class="note-meta">${meta}</div><div class="note-actions">${actions}</div>
+  </article>`;
+ }).join('');
 }
-
-function saveItems() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function openEditor(){
+ document.getElementById('noteForm').reset();document.getElementById('noteId').value='';
+ document.getElementById('editorTitle').textContent='Create new';
+ document.getElementById('deleteButton').style.display='none';selectedColor='#ffffff';
+ drawColors();updateBodyHint();document.getElementById('editor').classList.add('show');
 }
-
-function createId() {
-  return crypto.randomUUID
-    ? crypto.randomUUID()
-    : Date.now().toString(36) + Math.random().toString(36).slice(2);
+function closeEditor(){document.getElementById('editor').classList.remove('show');}
+function drawColors(){
+ document.getElementById('colors').innerHTML=palette.map(c=>`<button type="button" class="color-dot ${c===selectedColor?'selected':''}" style="background:${c}" onclick="chooseColor('${c}')"></button>`).join('');
 }
-
-/* VIEWS */
-
-function changeView(view) {
-  currentView = view;
-
-  document.querySelectorAll("[data-view]").forEach(button => {
-    button.classList.toggle("active", button.dataset.view === view);
-  });
-
-  const titles = {
-    all: "All items",
-    notes: "My Notes",
-    tasks: "My Tasks",
-    checklists: "Checklists",
-    pinned: "Pinned items",
-    archive: "Archived items",
-    trash: "Trash"
-  };
-
-  document.getElementById("pageTitle").textContent = titles[view] || "My Notes";
-  renderItems();
+function chooseColor(c){selectedColor=c;drawColors();}
+function updateBodyHint(){
+ const type=document.getElementById('type').value;
+ document.getElementById('bodyLabel').textContent=type==='checklist'?'CHECKLIST ITEMS (ONE PER LINE)':type==='task'?'TASK DETAILS':'CONTENT';
+ document.getElementById('body').placeholder=type==='checklist'?'Buy groceries\\nFinish assignment\\nCall someone':'Write something...';
 }
-
-/* RENDER */
-
-function renderItems() {
-  const grid = document.getElementById("itemsGrid");
-  const search = document.getElementById("searchInput").value.toLowerCase();
-
-  const activeItems = items.filter(item => !item.trashed && !item.archived);
-
-  document.getElementById("totalCount").textContent = activeItems.length;
-
-  document.getElementById("pendingCount").textContent =
-    activeItems.filter(x => x.type === "task" && !x.completed).length;
-
-  document.getElementById("completedCount").textContent =
-    activeItems.filter(x => x.type === "task" && x.completed).length;
-
-  let filtered = items.filter(item => {
-    if (currentView === "trash") return item.trashed;
-    if (currentView === "archive") return item.archived && !item.trashed;
-    if (item.trashed || item.archived) return false;
-    if (currentView === "notes" && item.type !== "note") return false;
-    if (currentView === "tasks" && item.type !== "task") return false;
-    if (currentView === "checklists" && item.type !== "checklist") return false;
-    if (currentView === "pinned" && !item.pinned) return false;
-    return true;
-  });
-
-  filtered = filtered.filter(item => {
-    const text = `${item.title} ${item.body} ${item.label}`.toLowerCase();
-    return text.includes(search);
-  });
-
-  filtered.sort((a, b) => {
-    if (a.pinned !== b.pinned) return b.pinned - a.pinned;
-    return (b.created || 0) - (a.created || 0);
-  });
-
-  grid.innerHTML = "";
-
-  if (!filtered.length) {
-    grid.innerHTML = `<div class="empty">✨<br><br>Nothing here yet.</div>`;
-    return;
-  }
-
-  filtered.forEach(item => {
-    const card = document.createElement("article");
-    card.className = "note-card";
-    card.style.background = item.color || "#ffffff";
-
-    const typeIcon = item.type === "task" ? "☑️" :
-      item.type === "checklist" ? "📋" : "📝";
-
-    const title = document.createElement("h3");
-    title.textContent = typeIcon + " " + (item.title || "Untitled");
-
-    const pin = document.createElement("button");
-    pin.className = "pin";
-    pin.textContent = item.pinned ? "📌" : "📍";
-    pin.title = "Pin or unpin";
-    pin.onclick = event => {
-      event.stopPropagation();
-      item.pinned = !item.pinned;
-      saveItems();
-      renderItems();
-    };
-
-    card.appendChild(pin);
-    card.appendChild(title);
-
-    if (item.type === "checklist") {
-      (item.checks || []).forEach(check => {
-        const line = document.createElement("div");
-        line.className = "check-row";
-
-        const box = document.createElement("input");
-        box.type = "checkbox";
-        box.checked = !!check.done;
-        box.onclick = event => event.stopPropagation();
-        box.onchange = () => {
-          check.done = box.checked;
-          saveItems();
-          renderItems();
-        };
-
-        const span = document.createElement("span");
-        span.textContent = check.text;
-        if (check.done) span.className = "done";
-
-        line.append(box, span);
-        card.appendChild(line);
-      });
-    } else {
-      const body = document.createElement("p");
-      body.textContent = item.body || (item.type === "task" ? "Task" : "");
-      card.appendChild(body);
-    }
-
-    if (item.due) {
-      const due = document.createElement("div");
-      due.className = "note-meta";
-      due.textContent = "📅 Due: " + item.due;
-      card.appendChild(due);
-    }
-
-    if (item.label) {
-      const label = document.createElement("div");
-      label.className = "note-meta";
-      label.textContent = "🏷 " + item.label;
-      card.appendChild(label);
-    }
-
-    if (item.priority && item.type === "task") {
-      const priority = document.createElement("div");
-      priority.className = "note-meta";
-      priority.textContent = "Priority: " + item.priority;
-      card.appendChild(priority);
-    }
-
-    const actions = document.createElement("div");
-    actions.className = "card-actions";
-
-    function action(text, callback) {
-      const button = document.createElement("button");
-      button.textContent = text;
-      button.onclick = event => {
-        event.stopPropagation();
-        callback();
-      };
-      actions.appendChild(button);
-    }
-
-    if (currentView === "trash") {
-      action("Restore", () => restoreItem(item.id));
-      action("Delete forever", () => deleteForever(item.id));
-    } else if (currentView === "archive") {
-      action("Unarchive", () => {
-        item.archived = false;
-        saveItems();
-        renderItems();
-      });
-      action("Delete", () => moveToTrash(item.id));
-    } else {
-      action("Edit", () => editItem(item.id));
-
-      if (item.type === "task") {
-        action(item.completed ? "Undo" : "Complete", () => {
-          item.completed = !item.completed;
-          saveItems();
-          renderItems();
-        });
-      }
-
-      action("Archive", () => {
-        item.archived = true;
-        saveItems();
-        renderItems();
-      });
-
-      action("Delete", () => moveToTrash(item.id));
-    }
-
-    card.appendChild(actions);
-    card.onclick = () => editItem(item.id);
-    grid.appendChild(card);
-  });
-}
-
-/* EDITOR */
-
-function openEditor(type) {
-  editingId = null;
-  editorTyp
+function editItem(id){
+ const x=items.find(i=>i.id===id);if(!x)return;
+ document.getElementById('noteId').value=x.id;
+ document.getElementById('title').value=x.title||'';
+ document.getElementById('type').value=x.type;
+ document.getElementById('body').value=x.type==='checklist'?(x.checks||[]).map(c=>c.text).join('\\n'):x.body||'';
+ document.getElementById('due').value=x.due||'';
+ document.getElementById('priority').value=x.priority||'normal';
+ document.getElementById('label').value=x.label||'';
+ selectedColor=x.color||'#ffffff';drawColors();updateBodyHint();
+ document.getElementById('editorTitle').textContent='Edit item';
+ document.getElementById('deleteButton').style.display=x.trashed?'none':'blo
