@@ -4,207 +4,520 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#168653">
+<meta name="theme-color" content="#188038">
 <title>My Notes & Tasks</title>
-<link rel="manifest" href="./manifest.json">
 
 <style>
 :root {
-  --green:#168653;
-  --dark:#116b42;
-  --light:#eaf7ef;
-  --bg:#f7f9f7;
-  --text:#202820;
-  --muted:#78867d;
-  --border:#e5ebe6;
+  --green: #188038;
+  --green-light: #e8f5e9;
+  --bg: #f8faf8;
+  --text: #202124;
+  --muted: #777;
+  --border: #e5e8e5;
 }
-*{box-sizing:border-box}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:Arial,sans-serif;
+
+* {
+  box-sizing: border-box;
 }
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-.app{max-width:1150px;margin:auto;padding:20px}
-header{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:15px;margin-bottom:25px;
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
-.brand{display:flex;align-items:center;gap:12px}
-.logo{
-  width:43px;height:43px;border-radius:14px;
-  background:var(--light);color:var(--green);
-  display:grid;place-items:center;font-size:23px;font-weight:bold;
+
+button, input, textarea, select {
+  font: inherit;
 }
-h1{font-size:22px;color:var(--dark);margin:0}
-.subtitle{font-size:12px;color:var(--muted);margin-top:5px}
-.header-actions{display:flex;gap:8px}
-.icon-btn{
-  background:white;border:1px solid var(--border);
-  padding:10px 13px;border-radius:12px;color:var(--dark);
+
+button {
+  cursor: pointer;
 }
-.search-area{margin-bottom:20px}
-.search-area input{
-  width:100%;padding:15px 17px;border-radius:14px;
-  border:1px solid var(--border);background:white;outline:none;
+
+.app {
+  min-height: 100vh;
 }
-.search-area input:focus{border-color:var(--green)}
-.layout{display:grid;grid-template-columns:210px 1fr;gap:25px}
-.sidebar{position:sticky;top:15px;height:max-content}
-.nav-btn{
-  width:100%;display:flex;align-items:center;gap:13px;
-  padding:13px 16px;margin-bottom:5px;border:0;
-  border-radius:0 25px 25px 0;background:transparent;
-  text-align:left;color:#536158;
+
+/* HEADER */
+
+header {
+  height: 70px;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 22px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
-.nav-btn.active{background:#dff2e5;color:var(--dark);font-weight:bold}
-.nav-btn:hover{background:#edf4ef}
-.sidebar-label{
-  margin:24px 0 10px 14px;
-  font-size:11px;color:var(--muted);font-weight:bold;
+
+.logo {
+  font-size: 21px;
+  font-weight: bold;
+  color: var(--green);
+  white-space: nowrap;
 }
-.small-note{font-size:11px;color:var(--muted);padding:10px 14px;line-height:1.5}
-.content{min-width:0}
-.editor{
-  background:white;border:1px solid var(--border);
-  border-radius:17px;padding:18px;margin-bottom:25px;
-  box-shadow:0 3px 15px #163b2108;
+
+.search {
+  flex: 1;
+  max-width: 650px;
+  margin: auto;
 }
-.editor input,.editor textarea,.editor select{
-  width:100%;border:0;outline:none;background:transparent;
-  padding:9px 4px;color:var(--text);
+
+.search input {
+  width: 100%;
+  padding: 13px 18px;
+  border: 0;
+  outline: none;
+  background: #f1f3f1;
+  border-radius: 12px;
 }
-.editor input.title-input{font-size:19px;font-weight:bold}
-.editor textarea{
-  resize:vertical;min-height:75px;line-height:1.5;
+
+.header-actions {
+  display: flex;
+  gap: 8px;
 }
-.editor-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.editor-row select,.editor-row input[type=date]{
-  width:auto;max-width:100%;border:1px solid var(--border);
-  border-radius:9px;padding:9px;font-size:12px;
+
+.icon-btn {
+  border: 0;
+  background: transparent;
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 19px;
 }
-.editor-bottom{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:10px;flex-wrap:wrap;
-  border-top:1px solid var(--border);padding-top:12px;
+
+.icon-btn:hover {
+  background: var(--green-light);
 }
-.primary{
-  background:var(--green);color:white;
-  border:0;border-radius:10px;padding:11px 18px;font-weight:bold;
+
+/* LAYOUT */
+
+.layout {
+  display: flex;
 }
-.primary:hover{background:var(--dark)}
-.secondary{
-  background:#edf5ef;color:var(--dark);
-  border:0;border-radius:10px;padding:10px 13px;
+
+.sidebar {
+  width: 230px;
+  padding: 22px 12px;
+  flex-shrink: 0;
 }
-.text-btn{
-  background:transparent;color:var(--muted);
-  border:0;padding:9px;
+
+.nav-btn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 13px 18px;
+  border-radius: 0 30px 30px 0;
+  margin-bottom: 5px;
+  color: #444;
 }
-.section-heading{
-  display:flex;justify-content:space-between;
-  align-items:center;margin:5px 0 16px;
+
+.nav-btn.active,
+.nav-btn:hover {
+  background: var(--green-light);
+  color: var(--green);
+  font-weight: bold;
 }
-.section-heading h2{font-size:15px;margin:0}
-.count{font-size:12px;color:var(--muted)}
-.grid{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:14px;align-items:start;
+
+.main {
+  flex: 1;
+  padding: 28px;
+  min-width: 0;
 }
-.note-card{
-  background:white;border:1px solid var(--border);
-  border-radius:14px;padding:15px;min-width:0;
-  overflow-wrap:anywhere;transition:.15s;
+
+.page-title {
+  font-size: 23px;
+  margin: 0 0 20px;
 }
-.note-card:hover{box-shadow:0 5px 18px #163b2115}
-.note-card.pinned{border:1px solid #9ac9a9}
-.note-card h3{font-size:15px;margin:0 0 10px;line-height:1.4}
-.note-body{
-  white-space:pre-wrap;line-height:1.55;
-  font-size:13px;color:#536158;max-height:220px;overflow:auto;
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 25px;
 }
-.note-meta{
-  font-size:10px;color:var(--muted);margin-top:12px;
+
+.stat {
+  background: white;
+  padding: 18px;
+  border-radius: 15px;
+  border: 1px solid var(--border);
 }
-.card-labels{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
-.label-chip{
-  background:#ffffffa8;border:1px solid #00000010;
-  padding:4px 8px;border-radius:20px;font-size:10px;
+
+.stat strong {
+  display: block;
+  font-size: 25px;
+  color: var(--green);
+  margin-top: 8px;
 }
-.card-actions{
-  display:flex;gap:5px;flex-wrap:wrap;
-  border-top:1px solid #0000000d;margin-top:12px;padding-top:10px;
+
+.add-area {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
 }
-.card-actions button{
-  background:transparent;border:0;color:#65756a;
-  font-size:12px;padding:6px 7px;border-radius:7px;
+
+.primary-btn {
+  border: 0;
+  background: var(--green);
+  color: white;
+  border-radius: 12px;
+  padding: 13px 19px;
+  font-weight: bold;
 }
-.card-actions button:hover{background:#ffffffaa}
-.task-line{
-  display:flex;align-items:flex-start;gap:8px;
-  margin:8px 0;font-size:13px;line-height:1.4;
+
+.secondary-btn {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 12px;
+  padding: 12px 17px;
 }
-.task-line input{accent-color:var(--green);margin-top:2px}
-.task-line.done span{text-decoration:line-through;color:#89958c}
-.badge{
-  display:inline-block;padding:4px 7px;border-radius:20px;
-  font-size:10px;background:#eaf5ed;color:var(--dark);
-  margin-top:8px;
+
+.primary-btn:hover {
+  background: #126b2c;
 }
-.badge.High{background:#fff0ed;color:#bd493a}
-.badge.Low{background:#edf4ff;color:#4775b7}
-.empty{
-  text-align:center;color:var(--muted);
-  padding:55px 15px;font-size:13px;
-  background:white;border:1px dashed var(--border);
-  border-radius:15px;
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 16px;
 }
-.empty strong{display:block;font-size:17px;color:var(--dark);margin-bottom:8px}
-.stats{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:10px;margin-bottom:18px;
+
+.note-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 17px;
+  min-height: 155px;
+  position: relative;
+  cursor: pointer;
+  transition: .15s;
+  overflow-wrap: anywhere;
 }
-.stat{
-  padding:14px;background:white;border:1px solid var(--border);
-  border-radius:13px;text-align:center;
+
+.note-card:hover {
+  box-shadow: 0 4px 15px #00000012;
+  transform: translateY(-2px);
 }
-.stat strong{display:block;color:var(--green);font-size:22px}
-.stat span{font-size:11px;color:var(--muted)}
-.reminder-box{
-  background:white;border:1px solid var(--border);
-  border-radius:15px;padding:17px;margin-top:20px;
+
+.note-card h3 {
+  margin: 0 30px 10px 0;
+  font-size: 17px;
 }
-.reminder-box p{font-size:12px;line-height:1.5;color:var(--muted)}
-.reminder-box input{padding:10px;border:1px solid var(--border);border-radius:9px}
-.mobile-nav{display:none}
-@media(max-width:850px){
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.note-card p {
+  color: #555;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  margin: 0 0 12px;
 }
-@media(max-width:600px){
-  .app{padding:15px 12px 85px}
-  header{margin-bottom:18px}
-  .layout{display:block}
-  .sidebar{
-    position:fixed;z-index:5;bottom:0;left:0;right:0;
-    background:white;border-top:1px solid var(--border);
-    display:flex;justify-content:space-around;
-    padding:7px 3px max(7px,env(safe-area-inset-bottom));
+
+.note-meta {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+.pin {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  border: 0;
+  background: transparent;
+  font-size: 18px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.card-actions button {
+  border: 0;
+  background: #f1f4f1;
+  padding: 7px 9px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.card-actions button:hover {
+  background: var(--green-light);
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 60px 15px;
+}
+
+/* EDITOR */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #0007;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  z-index: 50;
+}
+
+.overlay.show {
+  display: flex;
+}
+
+.editor {
+  background: white;
+  width: min(100%, 520px);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 20px;
+  padding: 23px;
+}
+
+.editor h2 {
+  margin-top: 0;
+}
+
+.editor input,
+.editor textarea,
+.editor select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 7px 0 13px;
+  outline-color: var(--green);
+  background: white;
+}
+
+.editor textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.editor label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #555;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.color-options {
+  display: flex;
+  gap: 10px;
+  margin: 8px 0 15px;
+}
+
+.color-dot {
+  width: 29px;
+  height: 29px;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.color-dot.selected {
+  border: 3px solid var(--green);
+}
+
+/* CHECKLIST */
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 9px 0;
+}
+
+.check-row input {
+  width: auto;
+  margin: 0;
+}
+
+.check-row span.done {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.check-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.check-input-row input {
+  flex: 1;
+}
+
+/* NOTIFICATION POPUP */
+
+.notification-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #0008;
+}
+
+.notification-popup[hidden] {
+  display: none;
+}
+
+.notification-card {
+  width: min(100%, 370px);
+  padding: 27px;
+  border-radius: 23px;
+  background: white;
+  text-align: center;
+  box-shadow: 0 12px 40px #0003;
+}
+
+.notification-icon {
+  font-size: 43px;
+}
+
+.notification-card h2 {
+  color: var(--green);
+  margin-bottom: 10px;
+}
+
+.notification-card p {
+  color: #666;
+  line-height: 1.5;
+}
+
+.notification-card button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#enableNotifications {
+  background: var(--green);
+  color: white;
+}
+
+#laterNotifications {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+#notificationMessage {
+  font-size: 13px;
+}
+
+/* MOBILE */
+
+.mobile-nav {
+  display: none;
+}
+
+@media(max-width: 700px) {
+  header {
+    padding: 0 12px;
+    gap: 8px;
+    height: 62px;
   }
-  .nav-btn{
-    width:auto;flex:1;display:flex;flex-direction:column;
-    gap:4px;padding:7px 2px;margin:0;
-    border-radius:10px;text-align:center;font-size:10px;
+
+  .logo {
+    font-size: 17px;
   }
-  .nav-btn span:first-child{font-size:18px}
-  .sidebar-label,.small-note{display:none}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-  .note-card{padding:12px}
-  .note-card h3{font-size:13px}
-  .note-body{font-size:12px}
-  .header-actions .icon-btn{padding:9px}
+
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    padding: 19px 14px 90px;
+  }
+
+  .stats {
+    gap: 8px;
+  }
+
+  .stat {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .stat strong {
+    font-size: 21px;
+  }
+
+  .notes-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .note-card {
+    padding: 13px;
+    min-height: 145px;
+  }
+
+  .note-card h3 {
+    font-size: 15px;
+  }
+
+  .note-card p {
+    font-size: 13px;
+  }
+
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: white;
+    border-top: 1px solid var(--border);
+    justify-content: space-around;
+    padding: 8px 3px;
+  }
+
+  .mobile-nav button {
+    background: transparent;
+    border: 0;
+    color: #666;
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .mobile-nav button.active {
+    color: var(--green);
+    font-weight: bold;
+  }
 }
-@media(max-width:350px){
-  .grid{grid-template-columns:1fr}
+
+@media(max-width: 370px) {
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
@@ -213,460 +526,398 @@ h1{font-size:22px;color:var(--dark);margin:0}
 <div class="app">
 
 <header>
-  <div class="brand">
-    <div class="logo">✓</div>
-    <div>
-      <h1>My Notes</h1>
-      <div class="subtitle">Your notes. Your tasks. Your day.</div>
-    </div>
+  <div class="logo">✦ My Notes</div>
+
+  <div class="search">
+    <input id="searchInput" placeholder="Search notes and tasks...">
   </div>
+
   <div class="header-actions">
-    <button class="icon-btn" id="reminderTop" title="Notifications">🔔</button>
+    <button class="icon-btn" onclick="openNotificationSettings()" title="Notifications">🔔</button>
+    <button class="icon-btn" onclick="openSettings()" title="Settings">⚙️</button>
   </div>
 </header>
-
-<div class="search-area">
-  <input id="search" placeholder="⌕  Search your notes and tasks...">
-</div>
 
 <div class="layout">
 
 <aside class="sidebar">
-  <button class="nav-btn active" data-view="notes"><span>📝</span><span>Notes</span></button>
-  <button class="nav-btn" data-view="tasks"><span>☑️</span><span>Tasks</span></button>
-  <button class="nav-btn" data-view="all"><span>📚</span><span>All items</span></button>
-  <button class="nav-btn" data-view="archive"><span>📦</span><span>Archive</span></button>
-  <button class="nav-btn" data-view="trash"><span>🗑️</span><span>Trash</span></button>
-
-  <div class="sidebar-label">ORGANIZE</div>
-  <button class="nav-btn" data-view="pinned"><span>📌</span><span>Pinned</span></button>
-  <button class="nav-btn" data-view="reminders"><span>🔔</span><span>Reminders</span></button>
-
-  <div class="small-note">
-    Your data is saved in this browser on this device.
-  </div>
+  <button class="nav-btn active" data-view="all" onclick="changeView('all')">🏠 All items</button>
+  <button class="nav-btn" data-view="notes" onclick="changeView('notes')">📝 Notes</button>
+  <button class="nav-btn" data-view="tasks" onclick="changeView('tasks')">☑️ Tasks</button>
+  <button class="nav-btn" data-view="checklists" onclick="changeView('checklists')">📋 Checklists</button>
+  <button class="nav-btn" data-view="pinned" onclick="changeView('pinned')">📌 Pinned</button>
+  <button class="nav-btn" data-view="archive" onclick="changeView('archive')">📦 Archive</button>
+  <button class="nav-btn" data-view="trash" onclick="changeView('trash')">🗑️ Trash</button>
 </aside>
 
-<section class="content">
+<main class="main">
+  <h1 class="page-title" id="pageTitle">All items</h1>
 
-<!-- Editor -->
-<div class="editor" id="editor">
-  <div class="editor-row">
-    <select id="itemType" aria-label="Item type">
-      <option value="note">📝 Note</option>
-      <option value="task">☑️ Task</option>
-    </select>
-    <span id="editStatus" class="count">Create something new</span>
+  <div class="stats">
+    <div class="stat">Total items<strong id="totalCount">0</strong></div>
+    <div class="stat">Pending tasks<strong id="pendingCount">0</strong></div>
+    <div class="stat">Completed<strong id="completedCount">0</strong></div>
   </div>
 
-  <input class="title-input" id="itemTitle" placeholder="Title">
-
-  <textarea id="itemBody" placeholder="Write your note here..."></textarea>
-
-  <div class="editor-row">
-    <select id="itemColor" aria-label="Card color">
-      <option value="white">White</option>
-      <option value="green">Green</option>
-      <option value="yellow">Yellow</option>
-      <option value="blue">Blue</option>
-      <option value="pink">Pink</option>
-      <option value="purple">Purple</option>
-    </select>
-
-    <input id="itemLabel" placeholder="Label (e.g. Study)" aria-label="Label" style="flex:1;min-width:110px">
-
-    <input id="itemDate" type="date" aria-label="Due date" style="max-width:150px">
+  <div class="add-area">
+    <button class="primary-btn" onclick="openEditor('note')">＋ New note</button>
+    <button class="secondary-btn" onclick="openEditor('task')">☑ New task</button>
+    <button class="secondary-btn" onclick="openEditor('checklist')">☷ Checklist</button>
   </div>
 
-  <div class="editor-row" style="margin:5px 0 13px">
-    <select id="itemPriority" aria-label="Priority">
-      <option value="Normal">Normal priority</option>
-      <option value="High">High priority</option>
-      <option value="Low">Low priority</option>
-    </select>
-  </div>
+  <div class="notes-grid" id="itemsGrid"></div>
+</main>
+</div>
 
-  <div class="editor-bottom">
-    <button class="text-btn" id="clearEditor">Clear</button>
-    <div style="display:flex;gap:8px">
-      <button class="secondary" id="cancelEdit" hidden>Cancel edit</button>
-      <button class="primary" id="saveItem">Save</button>
+<nav class="mobile-nav">
+  <button class="active" data-view="all" onclick="changeView('all')">🏠<span>Home</span></button>
+  <button data-view="notes" onclick="changeView('notes')">📝<span>Notes</span></button>
+  <button data-view="tasks" onclick="changeView('tasks')">☑️<span>Tasks</span></button>
+  <button data-view="pinned" onclick="changeView('pinned')">📌<span>Pinned</span></button>
+  <button data-view="archive" onclick="changeView('archive')">📦<span>Archive</span></button>
+</nav>
+</div>
+
+<!-- EDITOR -->
+
+<div class="overlay" id="editorOverlay">
+  <div class="editor">
+    <h2 id="editorHeading">Create item</h2>
+
+    <label>Title</label>
+    <input id="itemTitle" placeholder="Enter title">
+
+    <div id="bodySection">
+      <label>Details</label>
+      <textarea id="itemBody" placeholder="Write something..."></textarea>
+    </div>
+
+    <div id="checklistSection" hidden>
+      <label>Checklist items</label>
+      <div id="checklistEditor"></div>
+      <div class="check-input-row">
+        <input id="newCheckItem" placeholder="Add checklist item">
+        <button class="secondary-btn" onclick="addChecklistItem()">＋</button>
+      </div>
+    </div>
+
+    <div id="taskFields">
+      <label>Due date</label>
+      <input id="itemDue" type="date">
+
+      <label>Priority</label>
+      <select id="itemPriority">
+        <option value="normal">Normal</option>
+        <option value="high">High</option>
+        <option value="urgent">Urgent</option>
+      </select>
+    </div>
+
+    <label>Label</label>
+    <input id="itemLabel" placeholder="Example: Personal, Work, Study">
+
+    <label>Colour</label>
+    <div class="color-options" id="colorOptions">
+      <button class="color-dot selected" style="background:#ffffff" data-color="#ffffff"></button>
+      <button class="color-dot" style="background:#e8f5e9" data-color="#e8f5e9"></button>
+      <button class="color-dot" style="background:#fff3cd" data-color="#fff3cd"></button>
+      <button class="color-dot" style="background:#fce4ec" data-color="#fce4ec"></button>
+      <button class="color-dot" style="background:#e3f2fd" data-color="#e3f2fd"></button>
+      <button class="color-dot" style="background:#ede7f6" data-color="#ede7f6"></button>
+    </div>
+
+    <div class="editor-actions">
+      <button class="secondary-btn" onclick="closeEditor()">Cancel</button>
+      <button class="primary-btn" onclick="saveItem()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- Statistics -->
-<div class="stats">
-  <div class="stat"><strong id="totalCount">0</strong><span>All items</span></div>
-  <div class="stat"><strong id="taskCount">0</strong><span>Pending tasks</span></div>
-  <div class="stat"><strong id="doneCount">0</strong><span>Completed tasks</span></div>
+<!-- NOTIFICATION POPUP -->
+
+<div id="notificationPopup" class="notification-popup" hidden>
+  <div class="notification-card">
+    <div class="notification-icon">🔔</div>
+    <h2>Never miss a task!</h2>
+    <p>
+      Allow notifications to receive reminders about upcoming
+      and overdue tasks.
+    </p>
+    <button id="enableNotifications">Enable Notifications</button>
+    <button id="laterNotifications">Not Now</button>
+    <p id="notificationMessage" aria-live="polite"></p>
+  </div>
 </div>
 
-<div class="section-heading">
-  <h2 id="viewTitle">Your Notes</h2>
-  <span class="count" id="visibleCount">0 items</span>
-</div>
+<!-- SETTINGS POPUP -->
 
-<div id="itemsGrid" class="grid"></div>
-<div id="emptyState" class="empty" hidden>
-  <strong>Nothing here yet ✨</strong>
-  Create a note or task using the editor above.
-</div>
-
-<!-- Notifications -->
-<div class="reminder-box" id="notificationPanel">
-  <h3>🔔 Notifications & Reminders</h3>
-  <p id="notificationStatus">Notifications are not enabled.</p>
-  <button class="primary" id="enableNotifications">Enable notifications</button>
-  <button class="secondary" id="disableNotifications">Turn off reminders</button>
-  <p>Reminders are checked while this app is open or when you return to it. Background notifications when the website is closed require a push server.</p>
-</div>
-
-</section>
-</div>
+<div class="overlay" id="settingsOverlay">
+  <div class="editor">
+    <h2>Settings</h2>
+    <p>Manage your app preferences.</p>
+    <button class="secondary-btn" style="width:100%;margin-bottom:10px" onclick="openNotificationSettings()">🔔 Notification settings</button>
+    <button class="secondary-btn" style="width:100%;margin-bottom:10px" onclick="exportData()">⬇ Export my data</button>
+    <button class="secondary-btn" style="width:100%;margin-bottom:10px" onclick="document.getElementById('importFile').click()">⬆ Import data</button>
+    <input id="importFile" type="file" accept=".json,application/json" hidden onchange="importData(event)">
+    <button class="primary-btn" style="width:100%" onclick="document.getElementById('settingsOverlay').classList.remove('show')">Close</button>
+  </div>
 </div>
 
 <script>
-"use strict";
+/* STORAGE */
 
-/*
-  Data migration:
-  Existing My Tasks data is imported from the old "myTasks" key.
-  The original key is not deleted.
-*/
 const STORAGE_KEY = "myNotesTasks_v1";
-const OLD_TASK_KEY = "myTasks";
 const SETTINGS_KEY = "myNotesSettings_v1";
 
 let items = [];
-let currentView = "notes";
+let currentView = "all";
 let editingId = null;
-let settings = { reminders: false };
+let editorType = "note";
+let selectedColor = "#ffffff";
+let checklistDraft = [];
 
-function makeId(){
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
+function loadItems() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
 
-try {
-  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+    if (saved) {
+      items = JSON.parse(saved);
+    } else {
+      // Import older task data if available
+      const oldData = localStorage.getItem("myTasks");
 
-  if(Array.isArray(saved)){
-    items = saved;
-  } else {
-    const oldTasks = JSON.parse(localStorage.getItem(OLD_TASK_KEY) || "[]");
+      if (oldData) {
+        const oldItems = JSON.parse(oldData);
 
-    if(Array.isArray(oldTasks)){
-      items = oldTasks.map(t => ({
-        id: t.id || makeId(),
-        type: "task",
-        title: t.name || "Untitled task",
-        body: "",
-        date: t.date || "",
-        priority: t.priority || "Normal",
-        color: "white",
-        label: "Tasks",
-        done: !!t.done,
-        pinned: false,
-        archived: false,
-        trashed: false,
-        created: Date.now()
-      }));
+        if (Array.isArray(oldItems)) {
+          items = oldItems.map(x => ({
+            id: crypto.randomUUID(),
+            type: "task",
+            title: x.title || x.name || "Untitled task",
+            body: x.description || "",
+            due: x.due || "",
+            priority: "normal",
+            label: "",
+            color: "#ffffff",
+            completed: !!x.completed,
+            pinned: false,
+            archived: false,
+            trashed: false,
+            created: Date.now()
+          }));
+        }
+      }
     }
+  } catch (error) {
+    console.error("Unable to load saved data", error);
+    items = [];
   }
-} catch(e) {
-  items = [];
+
+  saveItems();
 }
 
-try {
-  settings = {
-    reminders: JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}").reminders === true
-  };
-} catch(e) {}
-
-const $ = id => document.getElementById(id);
-
-function save(){
+function saveItems() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  render();
 }
 
-function saveSettings(){
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  updateNotificationStatus();
+function createId() {
+  return crypto.randomUUID
+    ? crypto.randomUUID()
+    : Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
-// Navigation
-document.querySelectorAll(".nav-btn[data-view]").forEach(button => {
-  button.addEventListener("click", () => {
-    currentView = button.dataset.view;
+/* VIEWS */
 
-    document.querySelectorAll(".nav-btn").forEach(b =>
-      b.classList.toggle("active", b === button)
-    );
+function changeView(view) {
+  currentView = view;
 
-    const titles = {
-      notes:"Your Notes",
-      tasks:"Your Tasks",
-      all:"All Items",
-      archive:"Archived Items",
-      trash:"Trash",
-      pinned:"Pinned Items",
-      reminders:"Tasks with Due Dates"
-    };
-
-    $("viewTitle").textContent = titles[currentView] || "Your Items";
-    render();
-
-    if(window.innerWidth <= 600){
-      window.scrollTo({top:0,behavior:"smooth"});
-    }
+  document.querySelectorAll("[data-view]").forEach(button => {
+    button.classList.toggle("active", button.dataset.view === view);
   });
-});
 
-// Editor
-function clearEditor(){
-  editingId = null;
-  $("itemType").value = "note";
-  $("itemTitle").value = "";
-  $("itemBody").value = "";
-  $("itemColor").value = "white";
-  $("itemLabel").value = "";
-  $("itemDate").value = "";
-  $("itemPriority").value = "Normal";
-  $("editStatus").textContent = "Create something new";
-  $("saveItem").textContent = "Save";
-  $("cancelEdit").hidden = true;
+  const titles = {
+    all: "All items",
+    notes: "My Notes",
+    tasks: "My Tasks",
+    checklists: "Checklists",
+    pinned: "Pinned items",
+    archive: "Archived items",
+    trash: "Trash"
+  };
+
+  document.getElementById("pageTitle").textContent = titles[view] || "My Notes";
+  renderItems();
 }
 
-$("clearEditor").addEventListener("click", clearEditor);
-$("cancelEdit").addEventListener("click", clearEditor);
+/* RENDER */
 
-$("saveItem").addEventListener("click", () => {
-  const title = $("itemTitle").value.trim();
-  const body = $("itemBody").value.trim();
-  const type = $("itemType").value;
+function renderItems() {
+  const grid = document.getElementById("itemsGrid");
+  const search = document.getElementById("searchInput").value.toLowerCase();
 
-  if(!title && !body){
-    alert("Please enter a title or some content.");
+  const activeItems = items.filter(item => !item.trashed && !item.archived);
+
+  document.getElementById("totalCount").textContent = activeItems.length;
+
+  document.getElementById("pendingCount").textContent =
+    activeItems.filter(x => x.type === "task" && !x.completed).length;
+
+  document.getElementById("completedCount").textContent =
+    activeItems.filter(x => x.type === "task" && x.completed).length;
+
+  let filtered = items.filter(item => {
+    if (currentView === "trash") return item.trashed;
+    if (currentView === "archive") return item.archived && !item.trashed;
+    if (item.trashed || item.archived) return false;
+    if (currentView === "notes" && item.type !== "note") return false;
+    if (currentView === "tasks" && item.type !== "task") return false;
+    if (currentView === "checklists" && item.type !== "checklist") return false;
+    if (currentView === "pinned" && !item.pinned) return false;
+    return true;
+  });
+
+  filtered = filtered.filter(item => {
+    const text = `${item.title} ${item.body} ${item.label}`.toLowerCase();
+    return text.includes(search);
+  });
+
+  filtered.sort((a, b) => {
+    if (a.pinned !== b.pinned) return b.pinned - a.pinned;
+    return (b.created || 0) - (a.created || 0);
+  });
+
+  grid.innerHTML = "";
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty">✨<br><br>Nothing here yet.</div>`;
     return;
   }
 
-  if(editingId){
-    const item = items.find(x => x.id === editingId);
-    if(item){
-      item.title = title || "Untitled";
-      item.body = body;
-      item.type = type;
-      item.color = $("itemColor").value;
-      item.label = $("itemLabel").value.trim();
-      item.date = $("itemDate").value;
-      item.priority = $("itemPriority").value;
-      item.updated = Date.now();
-    }
-  } else {
-    items.unshift({
-      id: makeId(),
-      type,
-      title: title || "Untitled",
-      body,
-      color: $("itemColor").value,
-      label: $("itemLabel").value.trim(),
-      date: $("itemDate").value,
-      priority: $("itemPriority").value,
-      done:false,
-      pinned:false,
-      archived:false,
-      trashed:false,
-      created:Date.now()
-    });
-  }
-
-  clearEditor();
-  save();
-});
-
-// Edit item
-function editItem(item){
-  editingId = item.id;
-  $("itemType").value = item.type;
-  $("itemTitle").value = item.title || "";
-  $("itemBody").value = item.body || "";
-  $("itemColor").value = item.color || "white";
-  $("itemLabel").value = item.label || "";
-  $("itemDate").value = item.date || "";
-  $("itemPriority").value = item.priority || "Normal";
-  $("editStatus").textContent = "Editing item";
-  $("saveItem").textContent = "Update";
-  $("cancelEdit").hidden = false;
-
-  $("editor").scrollIntoView({behavior:"smooth",block:"start"});
-}
-
-// Card colors
-const colors = {
-  white:"#ffffff",
-  green:"#eaf7ef",
-  yellow:"#fff9df",
-  blue:"#eaf3ff",
-  pink:"#fff0f3",
-  purple:"#f3edff"
-};
-
-// Search
-$("search").addEventListener("input", render);
-
-function getVisibleItems(){
-  const query = $("search").value.toLowerCase().trim();
-
-  return items.filter(item => {
-    const text = [
-      item.title,item.body,item.label,item.priority
-    ].join(" ").toLowerCase();
-
-    if(query && !text.includes(query)) return false;
-
-    if(currentView === "trash") return item.trashed;
-    if(item.trashed) return false;
-
-    if(currentView === "archive") return item.archived;
-    if(item.archived) return false;
-
-    if(currentView === "notes") return item.type === "note";
-    if(currentView === "tasks") return item.type === "task";
-    if(currentView === "pinned") return item.pinned;
-    if(currentView === "reminders") return item.type === "task" && !!item.date;
-
-    return true;
-  }).sort((a,b) => {
-    if(!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
-    return (b.updated || b.created || 0) - (a.updated || a.created || 0);
-  });
-}
-
-function createButton(label, action, title){
-  const button = document.createElement("button");
-  button.textContent = label;
-  button.title = title || label;
-  button.addEventListener("click", action);
-  return button;
-}
-
-function render(){
-  const active = items.filter(x => !x.trashed && !x.archived);
-  const tasks = active.filter(x => x.type === "task");
-
-  $("totalCount").textContent = active.length;
-  $("taskCount").textContent = tasks.filter(x => !x.done).length;
-  $("doneCount").textContent = tasks.filter(x => x.done).length;
-
-  const visible = getVisibleItems();
-  const grid = $("itemsGrid");
-  grid.replaceChildren();
-
-  $("visibleCount").textContent =
-    visible.length + (visible.length === 1 ? " item" : " items");
-
-  $("emptyState").hidden = visible.length !== 0;
-
-  visible.forEach(item => {
+  filtered.forEach(item => {
     const card = document.createElement("article");
-    card.className = "note-card" + (item.pinned ? " pinned" : "");
-    card.style.background = colors[item.color] || "#fff";
+    card.className = "note-card";
+    card.style.background = item.color || "#ffffff";
+
+    const typeIcon = item.type === "task" ? "☑️" :
+      item.type === "checklist" ? "📋" : "📝";
 
     const title = document.createElement("h3");
-    title.textContent = item.title || "Untitled";
-    card.append(title);
+    title.textContent = typeIcon + " " + (item.title || "Untitled");
 
-    if(item.type === "task"){
-      const line = document.createElement("div");
-      line.className = "task-line" + (item.done ? " done" : "");
+    const pin = document.createElement("button");
+    pin.className = "pin";
+    pin.textContent = item.pinned ? "📌" : "📍";
+    pin.title = "Pin or unpin";
+    pin.onclick = event => {
+      event.stopPropagation();
+      item.pinned = !item.pinned;
+      saveItems();
+      renderItems();
+    };
 
-      const check = document.createElement("input");
-      check.type = "checkbox";
-      check.checked = !!item.done;
-      check.setAttribute("aria-label","Complete task");
-      check.addEventListener("change", () => {
-        item.done = check.checked;
-        item.updated = Date.now();
-        save();
+    card.appendChild(pin);
+    card.appendChild(title);
+
+    if (item.type === "checklist") {
+      (item.checks || []).forEach(check => {
+        const line = document.createElement("div");
+        line.className = "check-row";
+
+        const box = document.createElement("input");
+        box.type = "checkbox";
+        box.checked = !!check.done;
+        box.onclick = event => event.stopPropagation();
+        box.onchange = () => {
+          check.done = box.checked;
+          saveItems();
+          renderItems();
+        };
+
+        const span = document.createElement("span");
+        span.textContent = check.text;
+        if (check.done) span.className = "done";
+
+        line.append(box, span);
+        card.appendChild(line);
       });
-
-      const text = document.createElement("span");
-      text.textContent = item.body || "Task";
-
-      line.append(check,text);
-      card.append(line);
-    } else if(item.body){
-      const body = document.createElement("div");
-      body.className = "note-body";
-      body.textContent = item.body;
-      card.append(body);
+    } else {
+      const body = document.createElement("p");
+      body.textContent = item.body || (item.type === "task" ? "Task" : "");
+      card.appendChild(body);
     }
 
-    if(item.date){
-      const date = document.createElement("div");
-      date.className = "note-meta";
-      date.textContent = "📅 Due: " + item.date;
-      card.append(date);
+    if (item.due) {
+      const due = document.createElement("div");
+      due.className = "note-meta";
+      due.textContent = "📅 Due: " + item.due;
+      card.appendChild(due);
     }
 
-    if(item.type === "task"){
-      const priority = document.createElement("span");
-      priority.className = "badge " + (item.priority || "Normal");
-      priority.textContent = (item.priority || "Normal") + " priority";
-      card.append(priority);
+    if (item.label) {
+      const label = document.createElement("div");
+      label.className = "note-meta";
+      label.textContent = "🏷 " + item.label;
+      card.appendChild(label);
     }
 
-    if(item.label){
-      const labels = document.createElement("div");
-      labels.className = "card-labels";
-      const chip = document.createElement("span");
-      chip.className = "label-chip";
-      chip.textContent = item.label;
-      labels.append(chip);
-      card.append(labels);
+    if (item.priority && item.type === "task") {
+      const priority = document.createElement("div");
+      priority.className = "note-meta";
+      priority.textContent = "Priority: " + item.priority;
+      card.appendChild(priority);
     }
 
     const actions = document.createElement("div");
     actions.className = "card-actions";
 
-    if(currentView === "trash"){
-      actions.append(
-        createButton("↩ Restore", () => {
-          item.trashed = false;
-          save();
-        }),
-        createButton("Delete forever", () => {
-          if(confirm("Permanently delete this item?")){
-            items = items.filter(x => x.id !== item.id);
-            save();
-          }
-        })
-      );
-    } else {
-      actions.append(
-        createButton("✎ Edit", () => editItem(item)),
-        createButton(item.pinned ? "Unpin" : "📌 Pin", () => {
-          item.pinned = !item.pinned;
-          save();
-        }),
-        createButton(item.archived ? "Unarchive" : "Archive", () => {
-          item.archived = !item.archived;
-          save();
-        }),
-        createButton("🗑", () => {
-          if(confirm("Move this item to Trash?")){
-            item.trashed = true;
-            save();
-          }
-        })
-      );
+    function action(text, callback) {
+      const button = document.createElement("button");
+      button.textContent = text;
+      button.onclick = event => {
+        event.stopPropagation();
+        callback();
+      };
+      actions.appendChild(button);
     }
 
-    card.append(actions);
-    grid.append(card);
+    if (currentView === "trash") {
+      action("Restore", () => restoreItem(item.id));
+      action("Delete forever", () => deleteForever(item.id));
+    } else if (currentView === "archive") {
+      action("Unarchive", () => {
+        item.archived = false;
+        saveItems();
+        renderItems();
+      });
+      action("Delete", () => moveToTrash(item.id));
+    } else {
+      action("Edit", () => editItem(item.id));
+
+      if (item.type === "task") {
+        action(item.completed ? "Undo" : "Complete", () => {
+          item.completed = !item.completed;
+          saveItems();
+          renderItems();
+        });
+      }
+
+      action("Archive", () => {
+        item.archived = true;
+        saveItems();
+        renderItems();
+      });
+
+      action("Delete", () => moveToTrash(item.id));
+    }
+
+    card.appendChild(actions);
+    card.onclick = () => editItem(item.id);
+    grid.appendChild(card);
   });
 }
 
-// Notifications
-function upda
+/* EDITOR */
+
+function openEditor(type) {
+  editingId = null;
+  editorTyp
