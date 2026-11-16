@@ -1,481 +1,913 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#ffffff">
-<meta name="description" content="Notes, tasks and checklists in one place.">
-<title>Evernote Lite</title>
-<link rel="manifest" href="./manifest.json">
-<link rel="icon" href="./icon.svg" type="image/svg+xml">
-<style>
-:root {
-  --green:#16865b; --green2:#e6f4eb; --bg:#f7f9f7;
-  --surface:#fff; --text:#202820; --muted:#778078;
-  --line:#e5ebe5; --shadow:0 4px 18px #183b2410;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
- outline:2px solid var(--green);outline-offset:2px
-}
-header{height:66px;background:white;border-bottom:1px solid var(--line);
- display:flex;align-items:center;gap:14px;padding:0 20px;position:sticky;top:0;z-index:5}
-.brand{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:800;white-space:nowrap}
-.logo{width:35px;height:35px;border-radius:11px;background:var(--green);color:white;
- display:grid;place-items:center;font-size:22px}
-.search{flex:1;max-width:650px;margin:auto;position:relative}
-.search span{position:absolute;left:13px;top:10px;color:#78857a}
-.search input{width:100%;border:0;background:#f0f4f0;border-radius:12px;padding:12px 14px 12px 38px}
-.header-buttons{display:flex;gap:7px}
-.btn-icon{border:0;background:#f0f4f0;border-radius:10px;padding:10px;color:#455449}
-.layout{display:flex;max-width:1500px;margin:auto;min-height:calc(100vh - 66px)}
-aside{width:220px;padding:23px 12px;flex-shrink:0}
-.nav{width:100%;display:flex;gap:12px;align-items:center;text-align:left;
- padding:13px 16px;border:0;background:transparent;border-radius:0 25px 25px 0;
- color:#536056;margin:3px 0;font-size:14px}
-.nav.active,.nav:hover{background:var(--green2);color:#106b48;font-weight:700}
-.nav-label{font-size:11px;color:#9aa39b;font-weight:bold;letter-spacing:1px;margin:25px 15px 8px}
-main{flex:1;min-width:0;padding:28px 25px 90px}
-.heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}
-h1{font-size:25px;margin:0 0 5px}
-.subtitle{font-size:13px;color:var(--muted)}
-.primary{border:0;border-radius:11px;padding:12px 17px;background:var(--green);color:white;font-weight:bold}
-.primary:hover{background:#106b48}
-.secondary{border:1px solid var(--line);background:white;border-radius:10px;padding:10px 13px;color:#536056}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.chip{border:1px solid var(--line);background:white;border-radius:20px;padding:8px 14px;color:#657067;font-size:12px}
-.chip.active{background:var(--green2);color:#106b48;border-color:#c9e4d1;font-weight:bold}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
-.stat{background:white;border:1px solid var(--line);border-radius:13px;padding:14px}
-.stat strong{display:block;color:var(--green);font-size:23px}
-.stat span{font-size:12px;color:var(--muted)}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:14px;align-items:start}
-.card{background:white;border:1px solid var(--line);border-radius:14px;padding:15px;
- box-shadow:var(--shadow);overflow:hidden;min-width:0}
-.card.pinned{border-top:3px solid var(--green)}
-.card h3{font-size:16px;margin:0 28px 9px 0;overflow-wrap:anywhere}
-.card-content{font-size:13px;color:#566158;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
-.card-top{display:flex;justify-content:space-between;align-items:start}
-.pin-button{border:0;background:transparent;color:#758078;padding:2px 4px}
-.meta{font-size:11px;color:#89948b;margin-top:13px;display:flex;gap:6px;flex-wrap:wrap}
-.actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:13px}
-.actions button{border:0;background:#f1f4f1;color:#526056;border-radius:7px;padding:7px 9px;font-size:11px}
-.actions button:hover{background:var(--green2);color:#106b48}
-.check-item{display:flex;align-items:flex-start;gap:9px;margin:8px 0;font-size:13px;color:#536056}
-.check-item input{margin-top:3px;accent-color:var(--green)}
-.checked{text-decoration:line-through;color:#9aa39b}
-.empty{grid-column:1/-1;text-align:center;padding:65px 15px;color:var(--muted)}
-.empty strong{display:block;font-size:18px;color:#465248;margin:10px}
-.banner{display:none;background:#e8f5eb;border:1px solid #d1e9d8;border-radius:13px;
- padding:14px;margin-bottom:20px;align-items:center;justify-content:space-between;gap:12px}
-.banner p{font-size:12px;color:#637066;margin:5px 0 0}
-.overlay{display:none;position:fixed;inset:0;background:#102016aa;z-index:20;
- align-items:center;justify-content:center;padding:14px}
-.overlay.open{display:flex}
-.dialog{background:white;width:min(560px,100%);max-height:92vh;overflow:auto;
- border-radius:18px;padding:21px}
-.dialog-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
-.dialog-head h2{font-size:20px;margin:0}
-.close{border:0;border-radius:50%;width:34px;height:34px;background:#f0f4f0}
-.field{margin:13px 0}
-.field label{display:block;font-size:12px;font-weight:bold;color:#657067;margin-bottom:7px}
-.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #dfe7df;
- border-radius:10px;background:white;color:#263329}
-.field textarea{min-height:130px;resize:vertical;line-height:1.5}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.dialog-footer{display:flex;justify-content:space-between;gap:8px;margin-top:17px}
-.footer-right{display:flex;gap:8px}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
- background:#26392d;color:white;padding:12px 17px;border-radius:11px;
- z-index:50;display:none;font-size:13px;max-width:90%;text-align:center}
-.toast.show{display:block}
-.mobile-nav{display:none}
-@media(max-width:760px){
- header{height:59px;padding:0 11px;gap:9px}
- .brand{font-size:16px}.logo{width:31px;height:31px}
- .search input{padding:10px 8px 10px 33px}.search span{top:8px;left:10px}
- .header-buttons .desktop{display:none}
- aside{display:none}
- main{padding:21px 13px 100px}
- h1{font-size:22px}
- .cards{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:9px}
- .card{padding:12px}.card h3{font-size:15px}
- .actions button{padding:7px}
- .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:8;
- background:white;border-top:1px solid var(--line);justify-content:space-around;
- padding:8px 3px calc(8px + env(safe-area-inset-bottom))}
- .mobile-nav button{border:0;background:transparent;color:#718074;font-size:10px;
- display:grid;gap:3px;justify-items:center}
- .mobile-nav button.active{color:var(--green);font-weight:bold}
- .mobile-nav b{font-size:19px}
- .stats{gap:7px}.stat{padding:10px}.stat strong{font-size:19px}
- .banner{align-items:flex-start;flex-direction:column}
- .heading{align-items:flex-start}
-}
-</style>
-</head>
-<body>
-
-<header>
- <div class="brand"><div class="logo">✦</div>Evernote Lite</div>
- <div class="search"><span>⌕</span><input id="search" type="search" placeholder="Search notes and tasks"></div>
- <div class="header-buttons">
-  <button class="btn-icon desktop" data-action="export" title="Backup">⇩</button>
-  <button class="btn-icon desktop" data-action="import" title="Restore">⇧</button>
-  <button class="btn-icon" data-action="notifications" title="Notifications">♧</button>
- </div>
- <input id="importFile" type="file" accept=".json,application/json" hidden>
-</header>
-
-<div class="layout">
-<aside>
- <button class="nav active" data-view="all">▦ All notes</button>
- <button class="nav" data-view="notes">▤ Notes</button>
- <button class="nav" data-view="tasks">☑ Tasks</button>
- <button class="nav" data-view="checklists">☷ Checklists</button>
- <div class="nav-label">ORGANISE</div>
- <button class="nav" data-view="pinned">📌 Pinned</button>
- <button class="nav" data-view="archive">▣ Archive</button>
- <button class="nav" data-view="trash">♲ Trash</button>
- <div class="nav-label">YOUR DATA</div>
- <button class="nav" data-action="export">⇩ Backup notes</button>
- <button class="nav" data-action="import">⇧ Restore backup</button>
-</aside>
-
-<main>
- <div class="heading">
-  <div><h1 id="pageTitle">All notes</h1><div class="subtitle">Your ideas, plans and reminders.</div></div>
-  <button class="primary" data-action="new">＋ Create</button>
- </div>
-
- <div class="banner" id="notificationBanner">
-  <div><strong>Enable reminders</strong><p>Allow notifications for reminders while the app is active.</p></div>
-  <button class="primary" data-action="enableNotifications">Enable</button>
- </div>
-
- <div class="stats" id="stats">
-  <div class="stat"><strong id="noteCount">0</strong><span>Notes</span></div>
-  <div class="stat"><strong id="taskCount">0</strong><span>Open tasks</span></div>
-  <div class="stat"><strong id="doneCount">0</strong><span>Completed</span></div>
- </div>
-
- <div class="filters" id="filters">
-  <button class="chip active" data-filter="all">Everything</button>
-  <button class="chip" data-filter="today">Due today</button>
-  <button class="chip" data-filter="overdue">Overdue</button>
-  <button class="chip" data-filter="high">High priority</button>
- </div>
-
- <section class="cards" id="cards" aria-live="polite"></section>
-</main>
-</div>
-
-<nav class="mobile-nav">
- <button class="active" data-view="all"><b>▦</b>All</button>
- <button data-view="notes"><b>▤</b>Notes</button>
- <button data-view="tasks"><b>☑</b>Tasks</button>
- <button data-view="checklists"><b>☷</b>Lists</button>
- <button data-view="pinned"><b>📌</b>Pinned</button>
-</nav>
-
-<div class="overlay" id="editorOverlay">
- <form class="dialog" id="editorForm">
-  <div class="dialog-head">
-   <h2 id="editorHeading">Create item</h2>
-   <button type="button" class="close" data-action="close">✕</button>
-  </div>
-  <input type="hidden" id="itemId">
-  <div class="field">
-   <label for="itemType">TYPE</label>
-   <select id="itemType">
-    <option value="note">Note</option>
-    <option value="task">Task</option>
-    <option value="checklist">Checklist</option>
-   </select>
-  </div>
-  <div class="field">
-   <label for="itemTitle">TITLE</label>
-   <input id="itemTitle" maxlength="120" placeholder="Enter a title">
-  </div>
-  <div class="field">
-   <label id="contentLabel" for="itemBody">CONTENT</label>
-   <textarea id="itemBody" placeholder="Write your note here..."></textarea>
-  </div>
-  <div class="two">
-   <div class="field"><label for="itemDue">DUE DATE</label><input id="itemDue" type="date"></div>
-   <div class="field"><label for="itemPriority">PRIORITY</label>
-    <select id="itemPriority"><option value="normal">Normal</option><option value="low">Low</option><option value="high">High</option></select>
-   </div>
-  </div>
-  <div class="field"><label for="itemLabel">LABEL</label><input id="itemLabel" maxlength="35" placeholder="Personal, Work, Study..."></div>
-  <div class="field"><label for="itemColor">COLOUR</label>
-   <select id="itemColor">
-    <option value="#ffffff">White</option>
-    <option value="#fff4c7">Yellow</option>
-    <option value="#fce1dc">Pink</option>
-    <option value="#e2f1ff">Blue</option>
-    <option value="#e5f4e8">Green</option>
-    <option value="#f0e5ff">Purple</option>
-   </select>
-  </div>
-  <div class="dialog-footer">
-   <button type="button" class="secondary" id="deleteButton" data-action="deleteCurrent" hidden>Move to trash</button>
-   <div class="footer-right">
-    <button type="button" class="secondary" data-action="close">Cancel</button>
-    <button type="submit" class="primary">Save</button>
-   </div>
-  </div>
- </form>
-</div>
-
-<div class="toast" id="toast" role="status"></div>
-
-<script>
 (() => {
-'use strict';
+  'use strict';
 
-const DB_NAME = 'EvernoteLiteDB';
-const DB_VERSION = 1;
-const STORE = 'items';
+  // ==========================================
+  // EVERNOTE LITE — COMPLETE APPLICATION CODE
+  // ==========================================
 
-let db = null;
-let items = [];
-let currentView = 'all';
-let currentFilter = 'all';
+  const DB_NAME = 'EvernoteLiteDB';
+  const DB_VERSION = 1;
+  const STORE = 'items';
 
-const $ = id => document.getElementById(id);
+  let db = null;
+  let items = [];
+  let currentView = 'all';
+  let currentFilter = 'all';
 
-function escapeHTML(value) {
- return String(value ?? '').replace(/[&<>"']/g, char => ({
-  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
- }[char]));
-}
+  const $ = id => document.getElementById(id);
 
-function toast(message) {
- const el = $('toast');
- el.textContent = message;
- el.classList.add('show');
- clearTimeout(toast.timer);
- toast.timer = setTimeout(() => el.classList.remove('show'), 2600);
-}
+  // ---------- HELPERS ----------
 
-function openDatabase() {
- return new Promise((resolve, reject) => {
-  const request = indexedDB.open(DB_NAME, DB_VERSION);
-  request.onupgradeneeded = () => {
-   if (!request.result.objectStoreNames.contains(STORE)) {
-    request.result.createObjectStore(STORE, {keyPath:'id'});
-   }
-  };
-  request.onsuccess = () => resolve(request.result);
-  request.onerror = () => reject(request.error);
- });
-}
-
-function getAll() {
- return new Promise((resolve, reject) => {
-  const request = db.transaction(STORE,'readonly').objectStore(STORE).getAll();
-  request.onsuccess = () => resolve(request.result);
-  request.onerror = () => reject(request.error);
- });
-}
-
-function put(item) {
- return new Promise((resolve,reject) => {
-  const tx = db.transaction(STORE,'readwrite');
-  tx.objectStore(STORE).put(item);
-  tx.oncomplete = resolve;
-  tx.onerror = () => reject(tx.error);
- });
-}
-
-function removeFromDB(id) {
- return new Promise((resolve,reject) => {
-  const tx = db.transaction(STORE,'readwrite');
-  tx.objectStore(STORE).delete(id);
-  tx.oncomplete = resolve;
-  tx.onerror = () => reject(tx.error);
- });
-}
-
-function today() {
- const d = new Date();
- return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-}
-
-async function reload() {
- items = await getAll();
- render();
-}
-
-function setView(view) {
- currentView = view;
- currentFilter = 'all';
- document.querySelectorAll('[data-view]').forEach(button => {
-  button.classList.toggle('active',button.dataset.view === view);
- });
- document.querySelectorAll('[data-filter]').forEach(button => {
-  button.classList.toggle('active',button.dataset.filter === 'all');
- });
- const names = {
-  all:'All notes',notes:'Notes',tasks:'Tasks',checklists:'Checklists',
-  pinned:'Pinned',archive:'Archive',trash:'Trash'
- };
- $('pageTitle').textContent = names[view] || 'All notes';
- $('stats').hidden = !['all','notes'].includes(view);
- $('filters').hidden = !['all','tasks'].includes(view);
- render();
-}
-
-function setFilter(filter) {
- currentFilter = filter;
- document.querySelectorAll('[data-filter]').forEach(button => {
-  button.classList.toggle('active',button.dataset.filter === filter);
- });
- render();
-}
-
-function visibleItems() {
- const query = $('search').value.toLowerCase().trim();
-
- return items.filter(item => {
-  if (currentView === 'trash') {
-   if (!item.trashed) return false;
-  } else {
-   if (item.trashed) return false;
-   if (currentView === 'archive') {
-    if (!item.archived) return false;
-   } else {
-    if (item.archived) return false;
-    if (currentView === 'notes' && item.type !== 'note') return false;
-    if (currentView === 'tasks' && item.type !== 'task') return false;
-    if (currentView === 'checklists' && item.type !== 'checklist') return false;
-    if (currentView === 'pinned' && !item.pinned) return false;
-   }
+  function createId() {
+    if (window.crypto && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    return 'item-' + Date.now() + '-' +
+      Math.random().toString(16).slice(2);
   }
 
-  if (currentFilter === 'today' && item.due !== today()) return false;
-  if (currentFilter === 'overdue' &&
-      (!item.due || item.due >= today() || item.done)) return false;
-  if (currentFilter === 'high' && item.priority !== 'high') return false;
-
-  const content = (item.title+' '+item.body+' '+item.label+' '+
-   (item.checks||[]).map(c=>c.text).join(' ')).toLowerCase();
-  return !query || content.includes(query);
- });
-}
-
-function render() {
- const active = items.filter(x => !x.trashed && !x.archived);
- $('noteCount').textContent = active.filter(x=>x.type==='note').length;
- $('taskCount').textContent = active.filter(x=>x.type==='task'&&!x.done).length;
- $('doneCount').textContent = active.filter(x=>
-  (x.type==='task'&&x.done) ||
-  (x.type==='checklist'&&x.checks?.length&&x.checks.every(c=>c.done))
- ).length;
-
- const list = visibleItems().sort((a,b)=>
-  Number(b.pinned)-Number(a.pinned) || b.updatedAt-a.updatedAt
- );
-
- if (!list.length) {
-  $('cards').innerHTML = '<div class="empty"><div style="font-size:42px">✧</div><strong>Nothing here yet</strong><span>Create a note, task or checklist to get started.</span></div>';
-  return;
- }
-
- $('cards').innerHTML = list.map(item => {
-  let content = '';
-
-  if (item.type === 'checklist') {
-   content = (item.checks||[]).map((check,index) =>
-    `<label class="check-item">
-      <input type="checkbox" data-action="checkItem" data-id="${escapeHTML(item.id)}" data-index="${index}" ${check.done?'checked':''}>
-      <span class="${check.done?'checked':''}">${escapeHTML(check.text)}</span>
-     </label>`
-   ).join('');
-  } else if (item.type === 'task') {
-   content = `<label class="check-item">
-    <input type="checkbox" data-action="toggleTask" data-id="${escapeHTML(item.id)}" ${item.done?'checked':''}>
-    <span class="${item.done?'checked':''}">${escapeHTML(item.body||'Complete this task')}</span>
-   </label>`;
-  } else {
-   content = `<div class="card-content">${escapeHTML(item.body||'')}</div>`;
+  function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
   }
 
-  const metadata = [
-   item.type,
-   item.label ? '#'+escapeHTML(item.label) : '',
-   item.due ? '📅 '+escapeHTML(item.due) : '',
-   item.priority==='high' ? '⚑ High priority' : ''
-  ].filter(Boolean).join(' · ');
-
-  let actions = '';
-  if (currentView === 'trash') {
-   actions = `<button data-action="restore" data-id="${escapeHTML(item.id)}">Restore</button>
-    <button data-action="permanentDelete" data-id="${escapeHTML(item.id)}">Delete forever</button>`;
-  } else {
-   actions = `<button data-action="edit" data-id="${escapeHTML(item.id)}">Edit</button>
-    <button data-action="pin" data-id="${escapeHTML(item.id)}">${item.pinned?'Unpin':'Pin'}</button>
-    <button data-action="archive" data-id="${escapeHTML(item.id)}">${item.archived?'Unarchive':'Archive'}</button>
-    <button data-action="trash" data-id="${escapeHTML(item.id)}">Trash</button>`;
+  function today() {
+    const date = new Date();
+    return date.getFullYear() + '-' +
+      String(date.getMonth() + 1).padStart(2, '0') + '-' +
+      String(date.getDate()).padStart(2, '0');
   }
 
-  return `<article class="card ${item.pinned?'pinned':''}" style="background:${escapeHTML(item.color||'#ffffff')}">
-   <div class="card-top"><h3>${escapeHTML(item.title||'Untitled')}</h3>
-    <button class="pin-button" data-action="pin" data-id="${escapeHTML(item.id)}" aria-label="Pin note">${item.pinned?'📌':'♧'}</button>
-   </div>
-   ${content}
-   <div class="meta">${metadata}</div>
-   <div class="actions">${actions}</div>
-  </article>`;
- }).join('');
-}
+  function toast(message) {
+    const element = $('toast');
+    if (!element) return;
 
-function openEditor(item=null) {
- $('editorForm').reset();
- $('itemId').value = item?.id || '';
- $('itemType').value = item?.type || 'note';
- $('itemTitle').value = item?.title || '';
- $('itemBody').value = item?.type === 'checklist'
-  ? (item.checks||[]).map(c=>c.text).join('\n')
-  : item?.body || '';
- $('itemDue').value = item?.due || '';
- $('itemPriority').value = item?.priority || 'normal';
- $('itemLabel').value = item?.label || '';
- $('itemColor').value = item?.color || '#ffffff';
- $('editorHeading').textContent = item ? 'Edit item' : 'Create item';
- $('deleteButton').hidden = !item;
- updateEditorHint();
- $('editorOverlay').classList.add('open');
- $('itemTitle').focus();
-}
+    element.textContent = message;
+    element.classList.add('show');
 
-function closeEditor() {
- $('editorOverlay').classList.remove('open');
-}
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => {
+      element.classList.remove('show');
+    }, 2800);
+  }
 
-function updateEditorHint() {
- const type = $('itemType').value;
- $('contentLabel').textContent =
-  type==='checklist' ? 'CHECKLIST ITEMS — ONE PER LINE' :
-  type==='task' ? 'TASK DETAILS' : 'CONTENT';
- $('itemBody').placeholder = type==='checklist'
-  ? 'Buy groceries\nFinish assignment\nCall someone'
-  : type==='task' ? 'Describe your task...' : 'Write your note here...';
-}
+  // ---------- DATABASE ----------
 
-async function saveEditor(event) {
- event.preventDefault();
+  function openDatabase() {
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) {
+        reject(new Error('IndexedDB is not supported by this browser.'));
+        return;
+      }
 
- const id = $('itemId').value || crypto.randomUUID();
- const old = items.find(x=>x.id===id);
- const type = $('itemType').value;
- const body = $('itemBody').value.trim();
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
 
- const checks = type==='checklist'
-  ? body.split('\n').map(t=>t.trim()).filter(Boolean).map(text=>{
-    const previous = old?.checks?.find(c=>
+      request.onupgradeneeded = () => {
+        const database = request.result;
+
+        if (!database.objectStoreNames.contains(STORE)) {
+          database.createObjectStore(STORE, {
+            keyPath: 'id'
+          });
+        }
+      };
+
+      request.onsuccess = () => {
+        db = request.result;
+
+        db.onversionchange = () => {
+          db.close();
+          toast('Please reload the app.');
+        };
+
+        resolve(db);
+      };
+
+      request.onerror = () => reject(request.error);
+
+      request.onblocked = () => {
+        reject(new Error('Database is blocked. Close other app tabs and reload.'));
+      };
+    });
+  }
+
+  function getAll() {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(STORE, 'readonly');
+      const request = transaction.objectStore(STORE).getAll();
+
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  function put(item) {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(STORE, 'readwrite');
+
+      transaction.objectStore(STORE).put(item);
+
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error);
+    });
+  }
+
+  function removeFromDB(id) {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(STORE, 'readwrite');
+
+      transaction.objectStore(STORE).delete(id);
+
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  async function reload() {
+    items = await getAll();
+    render();
+  }
+
+  // ---------- NAVIGATION ----------
+
+  function setView(view) {
+    currentView = view;
+    currentFilter = 'all';
+
+    document.querySelectorAll('[data-view]').forEach(button => {
+      button.classList.toggle(
+        'active',
+        button.dataset.view === view
+      );
+    });
+
+    document.querySelectorAll('[data-filter]').forEach(button => {
+      button.classList.toggle(
+        'active',
+        button.dataset.filter === 'all'
+      );
+    });
+
+    const names = {
+      all: 'All notes',
+      notes: 'Notes',
+      tasks: 'Tasks',
+      checklists: 'Checklists',
+      pinned: 'Pinned',
+      archive: 'Archive',
+      trash: 'Trash'
+    };
+
+    $('pageTitle').textContent = names[view] || 'All notes';
+
+    $('stats').hidden = !['all', 'notes'].includes(view);
+    $('filters').hidden = !['all', 'tasks'].includes(view);
+
+    render();
+  }
+
+  function setFilter(filter) {
+    currentFilter = filter;
+
+    document.querySelectorAll('[data-filter]').forEach(button => {
+      button.classList.toggle(
+        'active',
+        button.dataset.filter === filter
+      );
+    });
+
+    render();
+  }
+
+  // ---------- SEARCH AND FILTERS ----------
+
+  function visibleItems() {
+    const query = $('search').value.toLowerCase().trim();
+
+    return items.filter(item => {
+      if (currentView === 'trash') {
+        if (!item.trashed) return false;
+      } else {
+        if (item.trashed) return false;
+
+        if (currentView === 'archive') {
+          if (!item.archived) return false;
+        } else {
+          if (item.archived) return false;
+
+          if (currentView === 'notes' &&
+              item.type !== 'note') return false;
+
+          if (currentView === 'tasks' &&
+              item.type !== 'task') return false;
+
+          if (currentView === 'checklists' &&
+              item.type !== 'checklist') return false;
+
+          if (currentView === 'pinned' &&
+              !item.pinned) return false;
+        }
+      }
+
+      if (currentFilter === 'today' &&
+          item.due !== today()) return false;
+
+      if (currentFilter === 'overdue' &&
+          (!item.due || item.due >= today() || item.done)) {
+        return false;
+      }
+
+      if (currentFilter === 'high' &&
+          item.priority !== 'high') return false;
+
+      const checklistText = (item.checks || [])
+        .map(check => check.text)
+        .join(' ');
+
+      const content = [
+        item.title,
+        item.body,
+        item.label,
+        checklistText
+      ].join(' ').toLowerCase();
+
+      return !query || content.includes(query);
+    });
+  }
+
+  // ---------- DISPLAY ITEMS ----------
+
+  function render() {
+    const active = items.filter(item =>
+      !item.trashed && !item.archived
+    );
+
+    $('noteCount').textContent =
+      active.filter(item => item.type === 'note').length;
+
+    $('taskCount').textContent =
+      active.filter(item =>
+        item.type === 'task' && !item.done
+      ).length;
+
+    $('doneCount').textContent =
+      active.filter(item =>
+        (item.type === 'task' && item.done) ||
+        (
+          item.type === 'checklist' &&
+          item.checks?.length &&
+          item.checks.every(check => check.done)
+        )
+      ).length;
+
+    const list = visibleItems().sort((a, b) =>
+      Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) ||
+      (b.updatedAt || 0) - (a.updatedAt || 0)
+    );
+
+    if (!list.length) {
+      $('cards').innerHTML = `
+        <div class="empty">
+          <div style="font-size:42px">✧</div>
+          <strong>Nothing here yet</strong>
+          <span>Create a note, task or checklist to get started.</span>
+        </div>
+      `;
+      return;
+    }
+
+    $('cards').innerHTML = list.map(item => {
+      let content = '';
+
+      if (item.type === 'checklist') {
+        content = (item.checks || []).map((check, index) => `
+          <label class="check-item">
+            <input
+              type="checkbox"
+              data-action="checkItem"
+              data-id="${escapeHTML(item.id)}"
+              data-index="${index}"
+              ${check.done ? 'checked' : ''}
+            >
+            <span class="${check.done ? 'checked' : ''}">
+              ${escapeHTML(check.text)}
+            </span>
+          </label>
+        `).join('');
+
+      } else if (item.type === 'task') {
+        content = `
+          <label class="check-item">
+            <input
+              type="checkbox"
+              data-action="toggleTask"
+              data-id="${escapeHTML(item.id)}"
+              ${item.done ? 'checked' : ''}
+            >
+            <span class="${item.done ? 'checked' : ''}">
+              ${escapeHTML(item.body || 'Complete this task')}
+            </span>
+          </label>
+        `;
+
+      } else {
+        content = `
+          <div class="card-content">
+            ${escapeHTML(item.body || '')}
+          </div>
+        `;
+      }
+
+      const metadata = [
+        item.type,
+        item.label ? '#' + escapeHTML(item.label) : '',
+        item.due ? '📅 ' + escapeHTML(item.due) : '',
+        item.priority === 'high' ? '⚑ High priority' : ''
+      ].filter(Boolean).join(' · ');
+
+      let actions = '';
+
+      if (currentView === 'trash') {
+        actions = `
+          <button data-action="restore" data-id="${escapeHTML(item.id)}">
+            Restore
+          </button>
+          <button data-action="permanentDelete" data-id="${escapeHTML(item.id)}">
+            Delete forever
+          </button>
+        `;
+      } else {
+        actions = `
+          <button data-action="edit" data-id="${escapeHTML(item.id)}">
+            Edit
+          </button>
+          <button data-action="pin" data-id="${escapeHTML(item.id)}">
+            ${item.pinned ? 'Unpin' : 'Pin'}
+          </button>
+          <button data-action="archive" data-id="${escapeHTML(item.id)}">
+            ${item.archived ? 'Unarchive' : 'Archive'}
+          </button>
+          <button data-action="trash" data-id="${escapeHTML(item.id)}">
+            Trash
+          </button>
+        `;
+      }
+
+      return `
+        <article
+          class="card ${item.pinned ? 'pinned' : ''}"
+          style="background:${escapeHTML(item.color || '#ffffff')}"
+        >
+          <div class="card-top">
+            <h3>${escapeHTML(item.title || 'Untitled')}</h3>
+            <button
+              class="pin-button"
+              data-action="pin"
+              data-id="${escapeHTML(item.id)}"
+              aria-label="Pin item"
+            >
+              ${item.pinned ? '📌' : '♧'}
+            </button>
+          </div>
+
+          ${content}
+
+          <div class="meta">${metadata}</div>
+          <div class="actions">${actions}</div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  // ---------- EDITOR ----------
+
+  function openEditor(item = null) {
+    $('editorForm').reset();
+
+    $('itemId').value = item?.id || '';
+    $('itemType').value = item?.type || 'note';
+    $('itemTitle').value = item?.title || '';
+
+    $('itemBody').value =
+      item?.type === 'checklist'
+        ? (item.checks || []).map(check => check.text).join('\n')
+        : item?.body || '';
+
+    $('itemDue').value = item?.due || '';
+    $('itemPriority').value = item?.priority || 'normal';
+    $('itemLabel').value = item?.label || '';
+    $('itemColor').value = item?.color || '#ffffff';
+
+    $('editorHeading').textContent =
+      item ? 'Edit item' : 'Create item';
+
+    $('deleteButton').hidden = !item;
+
+    updateEditorHint();
+
+    $('editorOverlay').classList.add('open');
+
+    $('itemTitle').focus();
+  }
+
+  function closeEditor() {
+    $('editorOverlay').classList.remove('open');
+  }
+
+  function updateEditorHint() {
+    const type = $('itemType').value;
+
+    $('contentLabel').textContent =
+      type === 'checklist'
+        ? 'CHECKLIST ITEMS — ONE PER LINE'
+        : type === 'task'
+          ? 'TASK DETAILS'
+          : 'CONTENT';
+
+    $('itemBody').placeholder =
+      type === 'checklist'
+        ? 'Buy groceries\nFinish assignment\nCall someone'
+        : type === 'task'
+          ? 'Describe your task...'
+          : 'Write your note here...';
+  }
+
+  async function saveEditor(event) {
+    event.preventDefault();
+
+    const id = $('itemId').value || createId();
+    const old = items.find(item => item.id === id);
+
+    const type = $('itemType').value;
+    const body = $('itemBody').value.trim();
+
+    let checks = [];
+
+    if (type === 'checklist') {
+      checks = body
+        .split('\n')
+        .map(text => text.trim())
+        .filter(Boolean)
+        .map(text => {
+          const previous = old?.checks?.find(
+            check => check.text === text
+          );
+
+          return {
+            text,
+            done: previous ? previous.done : false
+          };
+        });
+    }
+
+    const item = {
+      id,
+      type,
+      title: $('itemTitle').value.trim() || 'Untitled',
+      body: type === 'checklist' ? '' : body,
+      checks,
+      due: $('itemDue').value,
+      priority: $('itemPriority').value,
+      label: $('itemLabel').value.trim(),
+      color: $('itemColor').value,
+
+      pinned: old?.pinned || false,
+      archived: old?.archived || false,
+      trashed: old?.trashed || false,
+      done: type === 'task' ? (old?.done || false) : false,
+
+      createdAt: old?.createdAt || Date.now(),
+      updatedAt: Date.now()
+    };
+
+    try {
+      await put(item);
+      await reload();
+      closeEditor();
+      toast(old ? 'Changes saved' : 'Item created');
+    } catch (error) {
+      console.error(error);
+      toast('Could not save. Check browser storage.');
+    }
+  }
+
+  // ---------- ITEM ACTIONS ----------
+
+  async function updateItem(id, changes) {
+    const item = items.find(entry => entry.id === id);
+    if (!item) return;
+
+    const updated = {
+      ...item,
+      ...changes,
+      updatedAt: Date.now()
+    };
+
+    await put(updated);
+    await reload();
+  }
+
+  async function performAction(action, element) {
+    const id = element.dataset.id;
+    const item = items.find(entry => entry.id === id);
+
+    switch (action) {
+      case 'new':
+        openEditor();
+        break;
+
+      case 'close':
+        closeEditor();
+        break;
+
+      case 'edit':
+        if (item) openEditor(item);
+        break;
+
+      case 'deleteCurrent':
+        if (item) {
+          await updateItem(item.id, { trashed: true });
+          closeEditor();
+          toast('Moved to trash');
+        }
+        break;
+
+      case 'pin':
+        if (item) {
+          await updateItem(item.id, {
+            pinned: !item.pinned
+          });
+          toast(item.pinned ? 'Unpinned' : 'Pinned');
+        }
+        break;
+
+      case 'archive':
+        if (item) {
+          await updateItem(item.id, {
+            archived: !item.archived
+          });
+          toast(item.archived ? 'Unarchived' : 'Archived');
+        }
+        break;
+
+      case 'trash':
+        if (item) {
+          await updateItem(item.id, {
+            trashed: true
+          });
+          toast('Moved to trash');
+        }
+        break;
+
+      case 'restore':
+        if (item) {
+          await updateItem(item.id, {
+            trashed: false,
+            archived: false
+          });
+          toast('Item restored');
+        }
+        break;
+
+      case 'permanentDelete':
+        if (item && confirm('Permanently delete this item?')) {
+          await removeFromDB(id);
+          await reload();
+          toast('Deleted forever');
+        }
+        break;
+
+      case 'export':
+        exportBackup();
+        break;
+
+      case 'import':
+        $('importFile').click();
+        break;
+
+      case 'notifications':
+      case 'enableNotifications':
+        await enableNotifications();
+        break;
+    }
+  }
+
+  // ---------- CHECKBOX ACTIONS ----------
+
+  async function handleCheckbox(element) {
+    const id = element.dataset.id;
+    const item = items.find(entry => entry.id === id);
+
+    if (!item) return;
+
+    if (element.dataset.action === 'toggleTask') {
+      await updateItem(id, {
+        done: element.checked
+      });
+      return;
+    }
+
+    if (element.dataset.action === 'checkItem') {
+      const index = Number(element.dataset.index);
+      const checks = [...(item.checks || [])];
+
+      if (!checks[index]) return;
+
+      checks[index] = {
+        ...checks[index],
+        done: element.checked
+      };
+
+      await updateItem(id, { checks });
+    }
+  }
+
+  // ---------- BACKUP AND RESTORE ----------
+
+  function exportBackup() {
+    const backup = {
+      application: 'Evernote Lite',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      items
+    };
+
+    const blob = new Blob(
+      [JSON.stringify(backup, null, 2)],
+      { type: 'application/json' }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = 'evernote-lite-backup-' + today() + '.json';
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+
+    toast('Backup downloaded');
+  }
+
+  async function importBackup(file) {
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+
+      const imported = Array.isArray(data)
+        ? data
+        : data.items;
+
+      if (!Array.isArray(imported)) {
+        throw new Error('Invalid backup format');
+      }
+
+      const validItems = imported.filter(item =>
+        item &&
+        typeof item === 'object' &&
+        typeof item.id === 'string' &&
+        ['note', 'task', 'checklist'].includes(item.type)
+      );
+
+      if (!validItems.length) {
+        throw new Error('No valid items found');
+      }
+
+      if (!confirm(
+        'Restore ' + validItems.length +
+        ' items? Existing items with the same ID will be replaced.'
+      )) {
+        return;
+      }
+
+      for (const item of validItems) {
+        await put({
+          ...item,
+          checks: Array.isArray(item.checks) ? item.checks : [],
+          updatedAt: Date.now()
+        });
+      }
+
+      await reload();
+      toast('Backup restored successfully');
+
+    } catch (error) {
+      console.error(error);
+      toast('Could not restore this backup file');
+    } finally {
+      $('importFile').value = '';
+    }
+  }
+
+  // ---------- NOTIFICATIONS ----------
+
+  function updateNotificationBanner() {
+    const banner = $('notificationBanner');
+
+    if (!('Notification' in window)) {
+      banner.style.display = 'none';
+      return;
+    }
+
+    banner.style.display =
+      Notification.permission === 'default' ? 'flex' : 'none';
+  }
+
+  async function enableNotifications() {
+    if (!('Notification' in window)) {
+      toast('Notifications are not supported by this browser');
+      return;
+    }
+
+    if (!window.isSecureContext) {
+      toast('Notifications require a secure HTTPS website');
+      return;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+
+      updateNotificationBanner();
+
+      if (permission === 'granted') {
+        toast('Notifications enabled');
+        checkReminders();
+      } else {
+        toast('Notification permission was not granted');
+      }
+    } catch (error) {
+      console.error(error);
+      toast('Could not enable notifications');
+    }
+  }
+
+  function checkReminders() {
+    if (!('Notification' in window) ||
+        Notification.permission !== 'granted') {
+      return;
+    }
+
+    const currentDate = today();
+
+    const dueItems = items.filter(item =>
+      !item.trashed &&
+      !item.archived &&
+      item.due === currentDate &&
+      (
+        (item.type === 'task' && !item.done) ||
+        item.type === 'note' ||
+        item.type === 'checklist'
+      )
+    );
+
+    dueItems.forEach(item => {
+      const key = 'evernote-reminder-' + item.id + '-' + currentDate;
+
+      if (localStorage.getItem(key)) return;
+
+      try {
+        new Notification('Reminder: ' + item.title, {
+          body: item.type === 'task'
+            ? 'You have a task due today.'
+            : 'You have an item due today.',
+          tag: key
+        });
+
+        localStorage.setItem(key, 'shown');
+      } catch (error) {
+        console.error('Notification error:', error);
+      }
+    });
+  }
+
+  // ---------- EVENT LISTENERS ----------
+
+  document.addEventListener('click', async event => {
+    const viewButton = event.target.closest('[data-view]');
+
+    if (viewButton) {
+      setView(viewButton.dataset.view);
+      return;
+    }
+
+    const filterButton = event.target.closest('[data-filter]');
+
+    if (filterButton) {
+      setFilter(filterButton.dataset.filter);
+      return;
+    }
+
+    const actionButton = event.target.closest('[data-action]');
+
+    if (actionButton) {
+      try {
+        await performAction(
+          actionButton.dataset.action,
+          actionButton
+        );
+      } catch (error) {
+        console.error(error);
+        toast('Something went wrong. Please try again.');
+      }
+    }
+  });
+
+  $('editorForm').addEventListener('submit', async event => {
+    try {
+      await saveEditor(event);
+    } catch (error) {
+      console.error(error);
+      toast('Unable to save item');
+    }
+  });
+
+  $('itemType').addEventListener('change', updateEditorHint);
+
+  $('search').addEventListener('input', render);
+
+  $('importFile').addEventListener('change', event => {
+    importBackup(event.target.files[0]);
+  });
+
+  $('cards').addEventListener('change', async event => {
+    const element = event.target;
+
+    if (
+      element.matches(
+        'input[type="checkbox"][data-action="checkItem"], ' +
+        'input[type="checkbox"][data-action="toggleTask"]'
+      )
+    ) {
+      try {
+        await handleCheckbox(element);
+      } catch (error) {
+        console.error(error);
+        toast('Could not update item');
+      }
+    }
+  });
+
+  $('editorOverlay').addEventListener('click', event => {
+    if (event.target === $('editorOverlay')) {
+      closeEditor();
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      closeEditor();
+    }
+
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      event.key.toLowerCase() === 'k'
+    ) {
+      event.preventDefault();
+      $('search').focus();
+    }
+  });
+
+  // ---------- APP STARTUP ----------
+
+  async function startApp() {
+    try {
+      await openDatabase();
+      await reload();
+
+      updateNotificationBanner();
+      checkReminders();
+
+      // Reminders are checked while this page is open.
+      setInterval(checkReminders, 60000);
+
+      // Register service worker for PWA support.
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+          .catch(error => {
+            console.warn('Service worker registration failed:', error);
+          });
+      }
+
+      console.log('Evernote Lite started successfully.');
+
+    } catch (error) {
+      console.error('App startup failed:', error);
+      toast('App could not start. Please reload the page.');
+    }
+  }
+
+  startApp();
+
+})();
