@@ -1,913 +1,1019 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#6750a4">
+<meta name="description" content="A simple notes, tasks and checklist app.">
+<title>My Tasks & Notes</title>
+
+<style>
+:root {
+  --primary:#6750a4;
+  --primary-light:#eee8ff;
+  --bg:#f7f6fb;
+  --surface:#ffffff;
+  --text:#25232b;
+  --muted:#777480;
+  --border:#e9e6ef;
+  --danger:#d93025;
+  --shadow:0 3px 14px rgba(30,20,50,.07);
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+button,input,textarea,select {
+  font:inherit;
+}
+
+button {
+  cursor:pointer;
+}
+
+.app {
+  min-height:100vh;
+  display:flex;
+}
+
+.sidebar {
+  width:245px;
+  background:#fff;
+  border-right:1px solid var(--border);
+  padding:22px 14px;
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:0;
+  z-index:5;
+}
+
+.brand {
+  font-size:23px;
+  font-weight:800;
+  color:var(--primary);
+  padding:8px 12px 25px;
+}
+
+.nav {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:13px 16px;
+  border-radius:30px;
+  margin-bottom:5px;
+  color:#56515f;
+  cursor:pointer;
+  border:0;
+  background:transparent;
+  width:100%;
+  text-align:left;
+}
+
+.nav:hover { background:#f3f0fa; }
+
+.nav.active {
+  background:var(--primary-light);
+  color:var(--primary);
+  font-weight:700;
+}
+
+.nav .count {
+  margin-left:auto;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.main {
+  margin-left:245px;
+  width:calc(100% - 245px);
+  padding:25px 35px 60px;
+  max-width:1600px;
+}
+
+.topbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.page-title {
+  font-size:27px;
+  font-weight:750;
+}
+
+.top-actions {
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.icon-btn {
+  border:0;
+  background:white;
+  border-radius:50%;
+  width:42px;
+  height:42px;
+  box-shadow:var(--shadow);
+  font-size:18px;
+}
+
+.search-box {
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:30px;
+  padding:13px 19px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:min(520px,100%);
+  margin:0 auto 25px;
+}
+
+.search-box input {
+  border:0;
+  outline:0;
+  flex:1;
+  min-width:0;
+  background:transparent;
+}
+
+.create-box {
+  max-width:700px;
+  margin:0 auto 28px;
+  padding:15px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:15px;
+  box-shadow:var(--shadow);
+}
+
+.create-top {
+  display:flex;
+  gap:10px;
+}
+
+.create-top input {
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:0;
+  font-size:16px;
+  padding:10px;
+}
+
+.primary-btn {
+  border:0;
+  background:var(--primary);
+  color:white;
+  padding:12px 20px;
+  border-radius:25px;
+  font-weight:700;
+}
+
+.secondary-btn {
+  border:1px solid var(--border);
+  background:white;
+  color:var(--text);
+  padding:10px 14px;
+  border-radius:22px;
+}
+
+.create-options {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+.filters {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:15px 0 22px;
+}
+
+.filter {
+  border:1px solid var(--border);
+  background:white;
+  border-radius:22px;
+  padding:9px 15px;
+  color:var(--muted);
+}
+
+.filter.active {
+  background:var(--primary-light);
+  border-color:var(--primary-light);
+  color:var(--primary);
+  font-weight:700;
+}
+
+.stats {
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:22px;
+}
+
+.stat {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:13px 17px;
+  min-width:115px;
+}
+
+.stat strong {
+  display:block;
+  font-size:22px;
+  margin-top:5px;
+}
+
+.stat span {
+  color:var(--muted);
+  font-size:12px;
+}
+
+.cards {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:16px;
+}
+
+.card {
+  background:white;
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:15px;
+  padding:17px;
+  box-shadow:var(--shadow);
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.card.pinned {
+  border:1px solid #c3a8ff;
+}
+
+.card-top {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.card h3 {
+  font-size:17px;
+  margin:0 0 13px;
+  line-height:1.4;
+}
+
+.card-content {
+  white-space:pre-wrap;
+  line-height:1.6;
+  font-size:14px;
+}
+
+.pin-button {
+  border:0;
+  background:transparent;
+  font-size:18px;
+}
+
+.meta {
+  color:var(--muted);
+  font-size:11px;
+  margin-top:17px;
+  line-height:1.7;
+}
+
+.actions {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  border-top:1px solid rgba(0,0,0,.07);
+  margin-top:12px;
+  padding-top:10px;
+}
+
+.actions button {
+  border:0;
+  background:rgba(255,255,255,.65);
+  color:#554c66;
+  padding:7px 9px;
+  border-radius:8px;
+  font-size:11px;
+}
+
+.actions button:hover {
+  background:var(--primary-light);
+}
+
+.check-item {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:9px 0;
+  font-size:14px;
+}
+
+.check-item input {
+  accent-color:var(--primary);
+  width:17px;
+  height:17px;
+}
+
+.checked {
+  text-decoration:line-through;
+  color:var(--muted);
+}
+
+.empty {
+  grid-column:1/-1;
+  text-align:center;
+  padding:70px 20px;
+  color:var(--muted);
+}
+
+.empty strong {
+  display:block;
+  margin:12px;
+  color:var(--text);
+}
+
+.notification-banner {
+  max-width:700px;
+  margin:0 auto 20px;
+  padding:13px;
+  border-radius:12px;
+  background:#eee8ff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  font-size:13px;
+}
+
+.notification-banner[hidden] { display:none; }
+
+.overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:20;
+  background:rgba(15,10,25,.5);
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.overlay.open { display:flex; }
+
+.editor {
+  width:min(570px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:white;
+  border-radius:19px;
+  padding:23px;
+  box-shadow:0 15px 60px rgba(0,0,0,.2);
+}
+
+.editor h2 {
+  margin:0 0 20px;
+}
+
+.field {
+  margin-bottom:15px;
+}
+
+.field label {
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted);
+  margin-bottom:7px;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  outline:none;
+  background:white;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color:var(--primary);
+}
+
+.field textarea {
+  min-height:140px;
+  resize:vertical;
+}
+
+.form-row {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.editor-actions {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:20px;
+}
+
+.editor-actions button {
+  border:0;
+  border-radius:24px;
+  padding:11px 17px;
+}
+
+.danger-btn {
+  color:var(--danger);
+  background:#fff0ef;
+}
+
+.toast {
+  position:fixed;
+  bottom:25px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  opacity:0;
+  pointer-events:none;
+  background:#29252f;
+  color:white;
+  padding:13px 21px;
+  border-radius:30px;
+  z-index:50;
+  transition:.25s;
+  max-width:90%;
+  text-align:center;
+}
+
+.toast.show {
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+.mobile-menu {
+  display:none;
+}
+
+.footer {
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  padding:35px 0;
+}
+
+@media(max-width:800px) {
+  .sidebar {
+    width:72px;
+    padding:15px 7px;
+  }
+
+  .brand {
+    font-size:0;
+    text-align:center;
+    padding:12px 0 24px;
+  }
+
+  .brand:first-letter {
+    font-size:25px;
+  }
+
+  .nav {
+    justify-content:center;
+    padding:14px 5px;
+    font-size:19px;
+  }
+
+  .nav .nav-text,
+  .nav .count {
+    display:none;
+  }
+
+  .main {
+    margin-left:72px;
+    width:calc(100% - 72px);
+    padding:20px 15px 50px;
+  }
+
+  .page-title {
+    font-size:22px;
+  }
+
+  .cards {
+    grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  }
+}
+
+@media(max-width:500px) {
+  .main {
+    padding:16px 12px 45px;
+  }
+
+  .topbar {
+    margin-bottom:17px;
+  }
+
+  .cards {
+    grid-template-columns:1fr;
+  }
+
+  .create-top {
+    flex-wrap:wrap;
+  }
+
+  .create-top input {
+    width:100%;
+    flex-basis:100%;
+  }
+
+  .form-row {
+    grid-template-columns:1fr;
+  }
+
+  .notification-banner {
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .editor {
+    padding:18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">✦ My Notes</div>
+
+    <button class="nav active" data-view="all">
+      <span>▦</span><span class="nav-text">All notes</span>
+    </button>
+
+    <button class="nav" data-view="notes">
+      <span>▤</span><span class="nav-text">Notes</span>
+      <span class="count" id="noteCount">0</span>
+    </button>
+
+    <button class="nav" data-view="tasks">
+      <span>☑</span><span class="nav-text">Tasks</span>
+      <span class="count" id="taskCount">0</span>
+    </button>
+
+    <button class="nav" data-view="checklists">
+      <span>☷</span><span class="nav-text">Checklists</span>
+    </button>
+
+    <button class="nav" data-view="pinned">
+      <span>📌</span><span class="nav-text">Pinned</span>
+    </button>
+
+    <button class="nav" data-view="archive">
+      <span>▣</span><span class="nav-text">Archive</span>
+    </button>
+
+    <button class="nav" data-view="trash">
+      <span>♲</span><span class="nav-text">Trash</span>
+    </button>
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <div class="page-title" id="pageTitle">All notes</div>
+
+      <div class="top-actions">
+        <button class="icon-btn" id="backupButton"
+          data-action="export" title="Backup">↓</button>
+
+        <button class="icon-btn" id="restoreButton"
+          data-action="import" title="Restore">↑</button>
+      </div>
+    </header>
+
+    <div class="search-box">
+      <span>⌕</span>
+      <input id="search" type="search"
+        placeholder="Search notes and tasks...">
+    </div>
+
+    <div class="notification-banner" id="notificationBanner" hidden>
+      <span>🔔 Enable notifications for reminders while the app is open.</span>
+      <button class="primary-btn" data-action="notifications">
+        Enable
+      </button>
+    </div>
+
+    <section class="create-box">
+      <div class="create-top">
+        <input id="quickTitle" placeholder="Create a new note or task...">
+        <button class="primary-btn" id="quickCreate">＋ Create</button>
+      </div>
+
+      <div class="create-options">
+        <button class="secondary-btn" data-new-type="note">▤ Note</button>
+        <button class="secondary-btn" data-new-type="task">☑ Task</button>
+        <button class="secondary-btn" data-new-type="checklist">☷ Checklist</button>
+      </div>
+    </section>
+
+    <section class="stats" id="stats">
+      <div class="stat">
+        <span>NOTES</span>
+        <strong id="noteCount">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>OPEN TASKS</span>
+        <strong id="taskCount">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>COMPLETED</span>
+        <strong id="doneCount">0</strong>
+      </div>
+    </section>
+
+    <section class="filters" id="filters">
+      <button class="filter active" data-filter="all">All</button>
+      <button class="filter" data-filter="today">Due today</button>
+      <button class="filter" data-filter="overdue">Overdue</button>
+      <button class="filter" data-filter="high">High priority</button>
+    </section>
+
+    <section class="cards" id="cards">
+      <div class="empty">Loading your notes...</div>
+    </section>
+
+    <footer class="footer">
+      My Tasks & Notes · Your data is stored on this device.
+    </footer>
+
+  </main>
+</div>
+
+<!-- EDITOR -->
+
+<div class="overlay" id="editorOverlay">
+  <form class="editor" id="editorForm">
+
+    <h2 id="editorHeading">Create item</h2>
+
+    <input type="hidden" id="itemId">
+
+    <div class="field">
+      <label for="itemType">TYPE</label>
+      <select id="itemType">
+        <option value="note">Note</option>
+        <option value="task">Task</option>
+        <option value="checklist">Checklist</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="itemTitle">TITLE</label>
+      <input id="itemTitle" maxlength="150"
+        placeholder="Enter title">
+    </div>
+
+    <div class="field">
+      <label id="contentLabel" for="itemBody">CONTENT</label>
+      <textarea id="itemBody"
+        placeholder="Write something..."></textarea>
+    </div>
+
+    <div class="form-row">
+
+      <div class="field">
+        <label for="itemDue">DUE DATE</label>
+        <input id="itemDue" type="date">
+      </div>
+
+      <div class="field">
+        <label for="itemPriority">PRIORITY</label>
+        <select id="itemPriority">
+          <option value="normal">Normal</option>
+          <option value="high">High</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="form-row">
+
+      <div class="field">
+        <label for="itemLabel">LABEL</label>
+        <input id="itemLabel" placeholder="e.g. College">
+      </div>
+
+      <div class="field">
+        <label for="itemColor">CARD COLOUR</label>
+        <select id="itemColor">
+          <option value="#ffffff">White</option>
+          <option value="#fff4cc">Yellow</option>
+          <option value="#e7f4ff">Blue</option>
+          <option value="#e8f7e9">Green</option>
+          <option value="#ffe9ed">Pink</option>
+          <option value="#f0eaff">Purple</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="editor-actions">
+      <button type="button" class="danger-btn"
+        id="deleteButton" hidden>Move to trash</button>
+
+      <div style="display:flex;gap:8px;margin-left:auto">
+        <button type="button" class="secondary-btn"
+          id="cancelButton">Cancel</button>
+
+        <button type="submit" class="primary-btn">Save</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<input type="file" id="importFile"
+  accept=".json,application/json" hidden>
+
+<div class="toast" id="toast"></div>
+
+<script>
 (() => {
-  'use strict';
+'use strict';
 
-  // ==========================================
-  // EVERNOTE LITE — COMPLETE APPLICATION CODE
-  // ==========================================
+const DB_NAME = 'MyTasksNotesDB';
+const DB_VERSION = 1;
+const STORE = 'items';
 
-  const DB_NAME = 'EvernoteLiteDB';
-  const DB_VERSION = 1;
-  const STORE = 'items';
+let db;
+let items = [];
+let currentView = 'all';
+let currentFilter = 'all';
 
-  let db = null;
-  let items = [];
-  let currentView = 'all';
-  let currentFilter = 'all';
+const $ = id => document.getElementById(id);
 
-  const $ = id => document.getElementById(id);
+function id() {
+  return crypto.randomUUID
+    ? crypto.randomUUID()
+    : Date.now() + '-' + Math.random().toString(16).slice(2);
+}
 
-  // ---------- HELPERS ----------
+function safe(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[c]);
+}
 
-  function createId() {
-    if (window.crypto && crypto.randomUUID) {
-      return crypto.randomUUID();
-    }
-    return 'item-' + Date.now() + '-' +
-      Math.random().toString(16).slice(2);
-  }
+function today() {
+  const d = new Date();
+  return d.getFullYear() + '-' +
+    String(d.getMonth()+1).padStart(2,'0') + '-' +
+    String(d.getDate()).padStart(2,'0');
+}
 
-  function escapeHTML(value) {
-    return String(value ?? '').replace(/[&<>"']/g, char => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    }[char]));
-  }
+function toast(message) {
+  $('toast').textContent = message;
+  $('toast').classList.add('show');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(
+    () => $('toast').classList.remove('show'), 2500
+  );
+}
 
-  function today() {
-    const date = new Date();
-    return date.getFullYear() + '-' +
-      String(date.getMonth() + 1).padStart(2, '0') + '-' +
-      String(date.getDate()).padStart(2, '0');
-  }
+// DATABASE
 
-  function toast(message) {
-    const element = $('toast');
-    if (!element) return;
+function openDB() {
+  return new Promise((resolve,reject) => {
+    const request = indexedDB.open(DB_NAME,DB_VERSION);
 
-    element.textContent = message;
-    element.classList.add('show');
-
-    clearTimeout(toast.timer);
-    toast.timer = setTimeout(() => {
-      element.classList.remove('show');
-    }, 2800);
-  }
-
-  // ---------- DATABASE ----------
-
-  function openDatabase() {
-    return new Promise((resolve, reject) => {
-      if (!window.indexedDB) {
-        reject(new Error('IndexedDB is not supported by this browser.'));
-        return;
+    request.onupgradeneeded = () => {
+      if (!request.result.objectStoreNames.contains(STORE)) {
+        request.result.createObjectStore(STORE,{keyPath:'id'});
       }
-
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-      request.onupgradeneeded = () => {
-        const database = request.result;
-
-        if (!database.objectStoreNames.contains(STORE)) {
-          database.createObjectStore(STORE, {
-            keyPath: 'id'
-          });
-        }
-      };
-
-      request.onsuccess = () => {
-        db = request.result;
-
-        db.onversionchange = () => {
-          db.close();
-          toast('Please reload the app.');
-        };
-
-        resolve(db);
-      };
-
-      request.onerror = () => reject(request.error);
-
-      request.onblocked = () => {
-        reject(new Error('Database is blocked. Close other app tabs and reload.'));
-      };
-    });
-  }
-
-  function getAll() {
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(STORE, 'readonly');
-      const request = transaction.objectStore(STORE).getAll();
-
-      request.onsuccess = () => resolve(request.result || []);
-      request.onerror = () => reject(request.error);
-    });
-  }
-
-  function put(item) {
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(STORE, 'readwrite');
-
-      transaction.objectStore(STORE).put(item);
-
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-      transaction.onabort = () => reject(transaction.error);
-    });
-  }
-
-  function removeFromDB(id) {
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(STORE, 'readwrite');
-
-      transaction.objectStore(STORE).delete(id);
-
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    });
-  }
-
-  async function reload() {
-    items = await getAll();
-    render();
-  }
-
-  // ---------- NAVIGATION ----------
-
-  function setView(view) {
-    currentView = view;
-    currentFilter = 'all';
-
-    document.querySelectorAll('[data-view]').forEach(button => {
-      button.classList.toggle(
-        'active',
-        button.dataset.view === view
-      );
-    });
-
-    document.querySelectorAll('[data-filter]').forEach(button => {
-      button.classList.toggle(
-        'active',
-        button.dataset.filter === 'all'
-      );
-    });
-
-    const names = {
-      all: 'All notes',
-      notes: 'Notes',
-      tasks: 'Tasks',
-      checklists: 'Checklists',
-      pinned: 'Pinned',
-      archive: 'Archive',
-      trash: 'Trash'
     };
 
-    $('pageTitle').textContent = names[view] || 'All notes';
-
-    $('stats').hidden = !['all', 'notes'].includes(view);
-    $('filters').hidden = !['all', 'tasks'].includes(view);
-
-    render();
-  }
-
-  function setFilter(filter) {
-    currentFilter = filter;
-
-    document.querySelectorAll('[data-filter]').forEach(button => {
-      button.classList.toggle(
-        'active',
-        button.dataset.filter === filter
-      );
-    });
-
-    render();
-  }
-
-  // ---------- SEARCH AND FILTERS ----------
-
-  function visibleItems() {
-    const query = $('search').value.toLowerCase().trim();
-
-    return items.filter(item => {
-      if (currentView === 'trash') {
-        if (!item.trashed) return false;
-      } else {
-        if (item.trashed) return false;
-
-        if (currentView === 'archive') {
-          if (!item.archived) return false;
-        } else {
-          if (item.archived) return false;
-
-          if (currentView === 'notes' &&
-              item.type !== 'note') return false;
-
-          if (currentView === 'tasks' &&
-              item.type !== 'task') return false;
-
-          if (currentView === 'checklists' &&
-              item.type !== 'checklist') return false;
-
-          if (currentView === 'pinned' &&
-              !item.pinned) return false;
-        }
-      }
-
-      if (currentFilter === 'today' &&
-          item.due !== today()) return false;
-
-      if (currentFilter === 'overdue' &&
-          (!item.due || item.due >= today() || item.done)) {
-        return false;
-      }
-
-      if (currentFilter === 'high' &&
-          item.priority !== 'high') return false;
-
-      const checklistText = (item.checks || [])
-        .map(check => check.text)
-        .join(' ');
-
-      const content = [
-        item.title,
-        item.body,
-        item.label,
-        checklistText
-      ].join(' ').toLowerCase();
-
-      return !query || content.includes(query);
-    });
-  }
-
-  // ---------- DISPLAY ITEMS ----------
-
-  function render() {
-    const active = items.filter(item =>
-      !item.trashed && !item.archived
-    );
-
-    $('noteCount').textContent =
-      active.filter(item => item.type === 'note').length;
-
-    $('taskCount').textContent =
-      active.filter(item =>
-        item.type === 'task' && !item.done
-      ).length;
-
-    $('doneCount').textContent =
-      active.filter(item =>
-        (item.type === 'task' && item.done) ||
-        (
-          item.type === 'checklist' &&
-          item.checks?.length &&
-          item.checks.every(check => check.done)
-        )
-      ).length;
-
-    const list = visibleItems().sort((a, b) =>
-      Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) ||
-      (b.updatedAt || 0) - (a.updatedAt || 0)
-    );
-
-    if (!list.length) {
-      $('cards').innerHTML = `
-        <div class="empty">
-          <div style="font-size:42px">✧</div>
-          <strong>Nothing here yet</strong>
-          <span>Create a note, task or checklist to get started.</span>
-        </div>
-      `;
-      return;
-    }
-
-    $('cards').innerHTML = list.map(item => {
-      let content = '';
-
-      if (item.type === 'checklist') {
-        content = (item.checks || []).map((check, index) => `
-          <label class="check-item">
-            <input
-              type="checkbox"
-              data-action="checkItem"
-              data-id="${escapeHTML(item.id)}"
-              data-index="${index}"
-              ${check.done ? 'checked' : ''}
-            >
-            <span class="${check.done ? 'checked' : ''}">
-              ${escapeHTML(check.text)}
-            </span>
-          </label>
-        `).join('');
-
-      } else if (item.type === 'task') {
-        content = `
-          <label class="check-item">
-            <input
-              type="checkbox"
-              data-action="toggleTask"
-              data-id="${escapeHTML(item.id)}"
-              ${item.done ? 'checked' : ''}
-            >
-            <span class="${item.done ? 'checked' : ''}">
-              ${escapeHTML(item.body || 'Complete this task')}
-            </span>
-          </label>
-        `;
-
-      } else {
-        content = `
-          <div class="card-content">
-            ${escapeHTML(item.body || '')}
-          </div>
-        `;
-      }
-
-      const metadata = [
-        item.type,
-        item.label ? '#' + escapeHTML(item.label) : '',
-        item.due ? '📅 ' + escapeHTML(item.due) : '',
-        item.priority === 'high' ? '⚑ High priority' : ''
-      ].filter(Boolean).join(' · ');
-
-      let actions = '';
-
-      if (currentView === 'trash') {
-        actions = `
-          <button data-action="restore" data-id="${escapeHTML(item.id)}">
-            Restore
-          </button>
-          <button data-action="permanentDelete" data-id="${escapeHTML(item.id)}">
-            Delete forever
-          </button>
-        `;
-      } else {
-        actions = `
-          <button data-action="edit" data-id="${escapeHTML(item.id)}">
-            Edit
-          </button>
-          <button data-action="pin" data-id="${escapeHTML(item.id)}">
-            ${item.pinned ? 'Unpin' : 'Pin'}
-          </button>
-          <button data-action="archive" data-id="${escapeHTML(item.id)}">
-            ${item.archived ? 'Unarchive' : 'Archive'}
-          </button>
-          <button data-action="trash" data-id="${escapeHTML(item.id)}">
-            Trash
-          </button>
-        `;
-      }
-
-      return `
-        <article
-          class="card ${item.pinned ? 'pinned' : ''}"
-          style="background:${escapeHTML(item.color || '#ffffff')}"
-        >
-          <div class="card-top">
-            <h3>${escapeHTML(item.title || 'Untitled')}</h3>
-            <button
-              class="pin-button"
-              data-action="pin"
-              data-id="${escapeHTML(item.id)}"
-              aria-label="Pin item"
-            >
-              ${item.pinned ? '📌' : '♧'}
-            </button>
-          </div>
-
-          ${content}
-
-          <div class="meta">${metadata}</div>
-          <div class="actions">${actions}</div>
-        </article>
-      `;
-    }).join('');
-  }
-
-  // ---------- EDITOR ----------
-
-  function openEditor(item = null) {
-    $('editorForm').reset();
-
-    $('itemId').value = item?.id || '';
-    $('itemType').value = item?.type || 'note';
-    $('itemTitle').value = item?.title || '';
-
-    $('itemBody').value =
-      item?.type === 'checklist'
-        ? (item.checks || []).map(check => check.text).join('\n')
-        : item?.body || '';
-
-    $('itemDue').value = item?.due || '';
-    $('itemPriority').value = item?.priority || 'normal';
-    $('itemLabel').value = item?.label || '';
-    $('itemColor').value = item?.color || '#ffffff';
-
-    $('editorHeading').textContent =
-      item ? 'Edit item' : 'Create item';
-
-    $('deleteButton').hidden = !item;
-
-    updateEditorHint();
-
-    $('editorOverlay').classList.add('open');
-
-    $('itemTitle').focus();
-  }
-
-  function closeEditor() {
-    $('editorOverlay').classList.remove('open');
-  }
-
-  function updateEditorHint() {
-    const type = $('itemType').value;
-
-    $('contentLabel').textContent =
-      type === 'checklist'
-        ? 'CHECKLIST ITEMS — ONE PER LINE'
-        : type === 'task'
-          ? 'TASK DETAILS'
-          : 'CONTENT';
-
-    $('itemBody').placeholder =
-      type === 'checklist'
-        ? 'Buy groceries\nFinish assignment\nCall someone'
-        : type === 'task'
-          ? 'Describe your task...'
-          : 'Write your note here...';
-  }
-
-  async function saveEditor(event) {
-    event.preventDefault();
-
-    const id = $('itemId').value || createId();
-    const old = items.find(item => item.id === id);
-
-    const type = $('itemType').value;
-    const body = $('itemBody').value.trim();
-
-    let checks = [];
-
-    if (type === 'checklist') {
-      checks = body
-        .split('\n')
-        .map(text => text.trim())
-        .filter(Boolean)
-        .map(text => {
-          const previous = old?.checks?.find(
-            check => check.text === text
-          );
-
-          return {
-            text,
-            done: previous ? previous.done : false
-          };
-        });
-    }
-
-    const item = {
-      id,
-      type,
-      title: $('itemTitle').value.trim() || 'Untitled',
-      body: type === 'checklist' ? '' : body,
-      checks,
-      due: $('itemDue').value,
-      priority: $('itemPriority').value,
-      label: $('itemLabel').value.trim(),
-      color: $('itemColor').value,
-
-      pinned: old?.pinned || false,
-      archived: old?.archived || false,
-      trashed: old?.trashed || false,
-      done: type === 'task' ? (old?.done || false) : false,
-
-      createdAt: old?.createdAt || Date.now(),
-      updatedAt: Date.now()
+    request.onsuccess = () => {
+      db = request.result;
+      resolve(db);
     };
 
-    try {
-      await put(item);
-      await reload();
-      closeEditor();
-      toast(old ? 'Changes saved' : 'Item created');
-    } catch (error) {
-      console.error(error);
-      toast('Could not save. Check browser storage.');
-    }
-  }
+    request.onerror = () => reject(request.error);
+  });
+}
 
-  // ---------- ITEM ACTIONS ----------
+function getAll() {
+  return new Promise((resolve,reject) => {
+    const request = db.transaction(STORE,'readonly')
+      .objectStore(STORE).getAll();
 
-  async function updateItem(id, changes) {
-    const item = items.find(entry => entry.id === id);
-    if (!item) return;
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
+  });
+}
 
-    const updated = {
-      ...item,
-      ...changes,
-      updatedAt: Date.now()
-    };
+function saveDB(item) {
+  return new Promise((resolve,reject) => {
+    const tx = db.transaction(STORE,'readwrite');
+    tx.objectStore(STORE).put(item);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
 
-    await put(updated);
-    await reload();
-  }
+function deleteDB(itemId) {
+  return new Promise((resolve,reject) => {
+    const tx = db.transaction(STORE,'readwrite');
+    tx.objectStore(STORE).delete(itemId);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
 
-  async function performAction(action, element) {
-    const id = element.dataset.id;
-    const item = items.find(entry => entry.id === id);
+async function reload() {
+  items = await getAll();
+  render();
+}
 
-    switch (action) {
-      case 'new':
-        openEditor();
-        break;
+// NAVIGATION
 
-      case 'close':
-        closeEditor();
-        break;
+function setView(view) {
+  currentView = view;
+  currentFilter = 'all';
 
-      case 'edit':
-        if (item) openEditor(item);
-        break;
-
-      case 'deleteCurrent':
-        if (item) {
-          await updateItem(item.id, { trashed: true });
-          closeEditor();
-          toast('Moved to trash');
-        }
-        break;
-
-      case 'pin':
-        if (item) {
-          await updateItem(item.id, {
-            pinned: !item.pinned
-          });
-          toast(item.pinned ? 'Unpinned' : 'Pinned');
-        }
-        break;
-
-      case 'archive':
-        if (item) {
-          await updateItem(item.id, {
-            archived: !item.archived
-          });
-          toast(item.archived ? 'Unarchived' : 'Archived');
-        }
-        break;
-
-      case 'trash':
-        if (item) {
-          await updateItem(item.id, {
-            trashed: true
-          });
-          toast('Moved to trash');
-        }
-        break;
-
-      case 'restore':
-        if (item) {
-          await updateItem(item.id, {
-            trashed: false,
-            archived: false
-          });
-          toast('Item restored');
-        }
-        break;
-
-      case 'permanentDelete':
-        if (item && confirm('Permanently delete this item?')) {
-          await removeFromDB(id);
-          await reload();
-          toast('Deleted forever');
-        }
-        break;
-
-      case 'export':
-        exportBackup();
-        break;
-
-      case 'import':
-        $('importFile').click();
-        break;
-
-      case 'notifications':
-      case 'enableNotifications':
-        await enableNotifications();
-        break;
-    }
-  }
-
-  // ---------- CHECKBOX ACTIONS ----------
-
-  async function handleCheckbox(element) {
-    const id = element.dataset.id;
-    const item = items.find(entry => entry.id === id);
-
-    if (!item) return;
-
-    if (element.dataset.action === 'toggleTask') {
-      await updateItem(id, {
-        done: element.checked
-      });
-      return;
-    }
-
-    if (element.dataset.action === 'checkItem') {
-      const index = Number(element.dataset.index);
-      const checks = [...(item.checks || [])];
-
-      if (!checks[index]) return;
-
-      checks[index] = {
-        ...checks[index],
-        done: element.checked
-      };
-
-      await updateItem(id, { checks });
-    }
-  }
-
-  // ---------- BACKUP AND RESTORE ----------
-
-  function exportBackup() {
-    const backup = {
-      application: 'Evernote Lite',
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      items
-    };
-
-    const blob = new Blob(
-      [JSON.stringify(backup, null, 2)],
-      { type: 'application/json' }
+  document.querySelectorAll('[data-view]').forEach(button => {
+    button.classList.toggle(
+      'active',button.dataset.view === view
     );
+  });
 
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+  document.querySelectorAll('[data-filter]').forEach(button => {
+    button.classList.toggle(
+      'active',button.dataset.filter === 'all'
+    );
+  });
 
-    link.href = url;
-    link.download = 'evernote-lite-backup-' + today() + '.json';
+  const titles = {
+    all:'All notes',
+    notes:'Notes',
+    tasks:'Tasks',
+    checklists:'Checklists',
+    pinned:'Pinned',
+    archive:'Archive',
+    trash:'Trash'
+  };
 
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+  $('pageTitle').textContent = titles[view] || 'All notes';
+  $('stats').hidden = !['all','notes'].includes(view);
+  $('filters').hidden = !['all','tasks'].includes(view);
 
-    URL.revokeObjectURL(url);
+  render();
+}
 
-    toast('Backup downloaded');
-  }
+function setFilter(filter) {
+  currentFilter = filter;
 
-  async function importBackup(file) {
-    if (!file) return;
+  document.querySelectorAll('[data-filter]').forEach(button => {
+    button.classList.toggle(
+      'active',button.dataset.filter === filter
+    );
+  });
 
-    try {
-      const text = await file.text();
-      const data = JSON.parse(text);
+  render();
+}
 
-      const imported = Array.isArray(data)
-        ? data
-        : data.items;
+// FILTERS
 
-      if (!Array.isArray(imported)) {
-        throw new Error('Invalid backup format');
-      }
+function getVisibleItems() {
+  const query = $('search').value.toLowerCase().trim();
 
-      const validItems = imported.filter(item =>
-        item &&
-        typeof item === 'object' &&
-        typeof item.id === 'string' &&
-        ['note', 'task', 'checklist'].includes(item.type)
-      );
+  return items.filter(item => {
+    if (currentView === 'trash') {
+      if (!item.trashed) return false;
+    } else {
+      if (item.trashed) return false;
 
-      if (!validItems.length) {
-        throw new Error('No valid items found');
-      }
-
-      if (!confirm(
-        'Restore ' + validItems.length +
-        ' items? Existing items with the same ID will be replaced.'
-      )) {
-        return;
-      }
-
-      for (const item of validItems) {
-        await put({
-          ...item,
-          checks: Array.isArray(item.checks) ? item.checks : [],
-          updatedAt: Date.now()
-        });
-      }
-
-      await reload();
-      toast('Backup restored successfully');
-
-    } catch (error) {
-      console.error(error);
-      toast('Could not restore this backup file');
-    } finally {
-      $('importFile').value = '';
-    }
-  }
-
-  // ---------- NOTIFICATIONS ----------
-
-  function updateNotificationBanner() {
-    const banner = $('notificationBanner');
-
-    if (!('Notification' in window)) {
-      banner.style.display = 'none';
-      return;
-    }
-
-    banner.style.display =
-      Notification.permission === 'default' ? 'flex' : 'none';
-  }
-
-  async function enableNotifications() {
-    if (!('Notification' in window)) {
-      toast('Notifications are not supported by this browser');
-      return;
-    }
-
-    if (!window.isSecureContext) {
-      toast('Notifications require a secure HTTPS website');
-      return;
-    }
-
-    try {
-      const permission = await Notification.requestPermission();
-
-      updateNotificationBanner();
-
-      if (permission === 'granted') {
-        toast('Notifications enabled');
-        checkReminders();
+      if (currentView === 'archive') {
+        if (!item.archived) return false;
       } else {
-        toast('Notification permission was not granted');
+        if (item.archived) return false;
+        if (currentView === 'notes' && item.type !== 'note') return false;
+        if (currentView === 'tasks' && item.type !== 'task') return false;
+        if (currentView === 'checklists' && item.type !== 'checklist') return false;
+        if (currentView === 'pinned' && !item.pinned) return false;
       }
-    } catch (error) {
-      console.error(error);
-      toast('Could not enable notifications');
     }
+
+    if (currentFilter === 'today' && item.due !== today()) return false;
+
+    if (currentFilter === 'overdue' &&
+        (!item.due || item.due >= today() || item.done)) return false;
+
+    if (currentFilter === 'high' && item.priority !== 'high') return false;
+
+    const checkText = (item.checks || [])
+      .map(c => c.text).join(' ');
+
+    const text = [
+      item.title,item.body,item.label,checkText
+    ].join(' ').toLowerCase();
+
+    return !query || text.includes(query);
+  });
+}
+
+// RENDER
+
+function render() {
+  const active = items.filter(i =>
+    !i.trashed && !i.archived
+  );
+
+  $('noteCount').textContent =
+    active.filter(i => i.type === 'note').length;
+
+  $('taskCount').textContent =
+    active.filter(i => i.type === 'task' && !i.done).length;
+
+  $('doneCount').textContent =
+    active.filter(i =>
+      (i.type === 'task' && i.done) ||
+      (i.type === 'checklist' &&
+       i.checks.length &&
+       i.checks.every(c => c.done))
+    ).length;
+
+  const list = getVisibleItems().sort((a,b) =>
+    Number(b.pinned)-Number(a.pinned) ||
+    b.updatedAt-a.updatedAt
+  );
+
+  if (!list.length) {
+    $('cards').innerHTML = `
+      <div class="empty">
+        <div style="font-size:42px">✧</div>
+        <strong>Nothing here yet</strong>
+        Create a note, task or checklist to get started.
+      </div>`;
+    return;
   }
 
-  function checkReminders() {
-    if (!('Notification' in window) ||
-        Notification.permission !== 'granted') {
-      return;
-    }
+  $('cards').innerHTML = list.map(item => {
+    let content = '';
 
-    const currentDate = today();
-
-    const dueItems = items.filter(item =>
-      !item.trashed &&
-      !item.archived &&
-      item.due === currentDate &&
-      (
-        (item.type === 'task' && !item.done) ||
-        item.type === 'note' ||
-        item.type === 'checklist'
-      )
-    );
-
-    dueItems.forEach(item => {
-      const key = 'evernote-reminder-' + item.id + '-' + currentDate;
-
-      if (localStorage.getItem(key)) return;
-
-      try {
-        new Notification('Reminder: ' + item.title, {
-          body: item.type === 'task'
-            ? 'You have a task due today.'
-            : 'You have an item due today.',
-          tag: key
-        });
-
-        localStorage.setItem(key, 'shown');
-      } catch (error) {
-        console.error('Notification error:', error);
-      }
-    });
-  }
-
-  // ---------- EVENT LISTENERS ----------
-
-  document.addEventListener('click', async event => {
-    const viewButton = event.target.closest('[data-view]');
-
-    if (viewButton) {
-      setView(viewButton.dataset.view);
-      return;
-    }
-
-    const filterButton = event.target.closest('[data-filter]');
-
-    if (filterButton) {
-      setFilter(filterButton.dataset.filter);
-      return;
-    }
-
-    const actionButton = event.target.closest('[data-action]');
-
-    if (actionButton) {
-      try {
-        await performAction(
-          actionButton.dataset.action,
-          actionButton
-        );
-      } catch (error) {
-        console.error(error);
-        toast('Something went wrong. Please try again.');
-      }
-    }
-  });
-
-  $('editorForm').addEventListener('submit', async event => {
-    try {
-      await saveEditor(event);
-    } catch (error) {
-      console.error(error);
-      toast('Unable to save item');
-    }
-  });
-
-  $('itemType').addEventListener('change', updateEditorHint);
-
-  $('search').addEventListener('input', render);
-
-  $('importFile').addEventListener('change', event => {
-    importBackup(event.target.files[0]);
-  });
-
-  $('cards').addEventListener('change', async event => {
-    const element = event.target;
-
-    if (
-      element.matches(
-        'input[type="checkbox"][data-action="checkItem"], ' +
-        'input[type="checkbox"][data-action="toggleTask"]'
-      )
-    ) {
-      try {
-        await handleCheckbox(element);
-      } catch (error) {
-        console.error(error);
-        toast('Could not update item');
-      }
-    }
-  });
-
-  $('editorOverlay').addEventListener('click', event => {
-    if (event.target === $('editorOverlay')) {
-      closeEditor();
-    }
-  });
-
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') {
-      closeEditor();
-    }
-
-    if (
-      (event.ctrlKey || event.metaKey) &&
-      event.key.toLowerCase() === 'k'
-    ) {
-      event.preventDefault();
-      $('search').focus();
-    }
-  });
-
-  // ---------- APP STARTUP ----------
-
-  async function startApp() {
-    try {
-      await openDatabase();
-      await reload();
-
-      updateNotificationBanner();
-      checkReminders();
-
-      // Reminders are checked while this page is open.
-      setInterval(checkReminders, 60000);
-
-      // Register service worker for PWA support.
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js')
-          .catch(error => {
-            console.warn('Service worker registration failed:', error);
-          });
-      }
-
-      console.log('Evernote Lite started successfully.');
-
-    } catch (error) {
-      console.error('App startup failed:', error);
-      toast('App could not start. Please reload the page.');
-    }
-  }
-
-  startApp();
-
-})();
+    if (item.type === 'checklist') {
+      content = (item.checks || []).map((c,index) => `
+        <label class="check-item">
+          <input type="checkbox"
+            data-action="checkItem"
+            data-id="${safe(item.id)}"
+            data-index="${index}"
+            ${c.done?'checked':''}>
+          <span class="${c.done?'checked':''}">
+            ${safe(c.text)}
+          </span>
+        </label>
+      `).join('');
+    } else if (item.type === 'task') {
+      content = `
+        <label class="check-item">
+          <input type="checkbox"
+            data-action="toggleTask"
+            data-id="${safe(item.id)}"
+            ${item.done?'checked':''}>
+          <span class="${item.done?'checked':''}">
+            ${safe(item.body || 'Complete this task')}
+          </span>
+        </label>`;
+    } else {
+      content = `<div class="card-content">${sa
