@@ -1,18 +1,19 @@
 
 {
-  "name": "My Tasks",
-  "short_name": "My Tasks",
-  "start_url": "./index.html",
+  "name": "Evernote Lite - Notes and Tasks",
+  "short_name": "Evernote Lite",
+  "description": "A free notes, tasks and checklist app",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#7155D9",
+  "background_color": "#f6f8f6",
+  "theme_color": "#16865b",
   "icons": [
     {
       "src": "icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
