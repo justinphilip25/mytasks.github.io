@@ -5,8 +5,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#168653">
+<meta name="description" content="Organize your day with My Tasks.">
 <title>My Tasks</title>
 <link rel="manifest" href="./manifest.json">
+
 <style>
 :root {
   --green:#168653;
@@ -19,18 +21,14 @@
 }
 *{box-sizing:border-box}
 body{
-  margin:0;
-  padding:22px 16px 45px;
+  margin:0;padding:22px 16px 45px;
   font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
+  background:var(--bg);color:var(--text);
 }
 main{max-width:650px;margin:auto}
 header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:10px 0 25px;
+  display:flex;justify-content:space-between;
+  align-items:center;margin:10px 0 25px;
 }
 h1{font-size:27px;margin:0;color:var(--dark)}
 header p{color:var(--muted);margin:7px 0 0;font-size:13px}
@@ -64,25 +62,25 @@ h3{font-size:16px;margin:0 0 16px}
   height:100%;width:0;background:var(--green);
   border-radius:20px;transition:width .3s;
 }
-input,select,button{
-  font:inherit;border-radius:11px;
-}
+input,select,button{font:inherit;border-radius:11px}
 input,select{
   width:100%;padding:13px;margin:5px 0 11px;
   border:1px solid var(--border);
-  background:white;color:var(--text);
-  outline:none;
+  background:white;color:var(--text);outline:none;
 }
 input:focus,select:focus{border-color:var(--green)}
 button{
   border:0;padding:12px 16px;
   cursor:pointer;font-weight:bold;
 }
+button:disabled{opacity:.5;cursor:not-allowed}
 .primary{background:var(--green);color:white;width:100%}
 .primary:active{background:var(--dark)}
-.filters{
-  display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;
+.secondary{
+  background:#eef3ef;color:var(--green);
+  width:100%;margin-top:9px;
 }
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
 .filter{
   background:#f0f4f1;color:#536158;
   padding:9px 13px;font-size:12px;
@@ -115,16 +113,28 @@ button{
   padding:8px 11px;font-size:17px;
 }
 .empty{text-align:center;color:var(--muted);padding:25px 5px;font-size:13px}
-.section-title{display:flex;justify-content:space-between;align-items:center}
+.section-title{
+  display:flex;justify-content:space-between;align-items:center;
+}
 #taskCount{font-size:12px;color:var(--muted)}
+.status{
+  font-size:13px;color:var(--muted);
+  line-height:1.5;margin:0 0 12px;
+}
+.note{
+  font-size:11px;line-height:1.5;
+  color:var(--muted);margin-top:12px;
+}
 @media(max-width:380px){
   body{padding:15px 10px}
   .card{padding:15px}
 }
 </style>
 </head>
+
 <body>
 <main>
+
 <header>
   <div>
     <h1>My Tasks ✦</h1>
@@ -133,6 +143,7 @@ button{
   <div class="logo">✓</div>
 </header>
 
+<!-- Progress -->
 <div class="card">
   <h3>My Progress</h3>
   <div class="stats">
@@ -144,9 +155,12 @@ button{
     <span style="font-size:12px;color:#78867d">Completion progress</span>
     <strong id="percent" style="font-size:12px;color:#168653">0%</strong>
   </div>
-  <div class="progress-track"><div id="progressBar"></div></div>
+  <div class="progress-track">
+    <div id="progressBar"></div>
+  </div>
 </div>
 
+<!-- Add task -->
 <div class="card">
   <h3>＋ Add a new task</h3>
   <form id="taskForm">
@@ -163,164 +177,442 @@ button{
   </form>
 </div>
 
+<!-- Notifications -->
+<div class="card">
+  <h3>🔔 Notifications & Reminders</h3>
+  <p class="status" id="notificationStatus">
+    Check notification availability.
+  </p>
+
+  <button class="primary" id="enableNotifications" type="button">
+    Enable Notifications
+  </button>
+
+  <button class="secondary" id="disableNotifications" type="button">
+    Turn Off Reminders
+  </button>
+
+  <div style="margin-top:17px">
+    <label for="reminderTime" style="font-size:12px;color:#78867d">
+      Daily reminder time
+    </label>
+    <input id="reminderTime" type="time" value="09:00">
+    <button class="secondary" id="saveReminderTime" type="button">
+      Save Reminder Time
+    </button>
+  </div>
+
+  <p class="note">
+    Reminders are checked when this website is open or reopened.
+    Browser notifications require permission. Scheduled notifications
+    while the website is closed require a push-notification server.
+  </p>
+</div>
+
+<!-- Task list -->
 <div class="card">
   <div class="section-title">
     <h3 style="margin:0">Your tasks</h3>
-    <span id="taskCount">0 tasks</span>
+    <span id="taskCount">0 shown</span>
   </div>
+
   <input id="search" placeholder="⌕ Search tasks...">
+
   <div class="filters">
     <button class="filter active" data-filter="All">All</button>
     <button class="filter" data-filter="Pending">Pending</button>
     <button class="filter" data-filter="Completed">Completed</button>
   </div>
+
   <div id="list"></div>
 </div>
+
 </main>
 
 <script>
+"use strict";
+
 const STORAGE_KEY = "myTasks";
+const REMINDER_KEY = "myTasksReminderSettings";
+
 let tasks = [];
 let currentFilter = "All";
+let reminderSettings = {
+  enabled: false,
+  time: "09:00"
+};
 
 try {
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
   if (Array.isArray(saved)) tasks = saved;
-} catch(e) {
+} catch (e) {
   tasks = [];
 }
 
-document.getElementById("today").textContent =
-  new Date().toLocaleDateString("en-IN", {
-    weekday:"long", day:"numeric", month:"long", year:"numeric"
-  });
+try {
+  const savedSettings = JSON.parse(
+    localStorage.getItem(REMINDER_KEY) || "{}"
+  );
 
-function save(){
+  reminderSettings = {
+    enabled: savedSettings.enabled === true,
+    time: /^\d{2}:\d{2}$/.test(savedSettings.time || "")
+      ? savedSettings.time
+      : "09:00"
+  };
+} catch (e) {}
+
+const $ = id => document.getElementById(id);
+
+$("today").textContent = new Date().toLocaleDateString("en-IN", {
+  weekday:"long",
+  day:"numeric",
+  month:"long",
+  year:"numeric"
+});
+
+function saveTasks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   render();
 }
 
-document.getElementById("taskForm").addEventListener("submit", e=>{
-  e.preventDefault();
-  const name = document.getElementById("taskName").value.trim();
-  if(!name) return;
+function saveSettings() {
+  localStorage.setItem(REMINDER_KEY, JSON.stringify(reminderSettings));
+  updateNotificationStatus();
+}
 
-  tasks.unshift({
+// Add task
+$("taskForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const name = $("taskName").value.trim();
+
+  if (!name) {
+    alert("Please enter a task.");
+    return;
+  }
+
+  const task = {
     id: Date.now().toString() + Math.random().toString(16).slice(2),
     name,
-    date: document.getElementById("taskDate").value,
-    priority: document.getElementById("priority").value,
-    done:false
-  });
+    date: $("taskDate").value,
+    priority: $("priority").value,
+    done: false
+  };
 
-  document.getElementById("taskName").value = "";
-  document.getElementById("taskDate").value = "";
-  document.getElementById("priority").value = "Normal";
-  save();
+  tasks.unshift(task);
+  saveTasks();
+
+  $("taskName").value = "";
+  $("taskDate").value = "";
+  $("priority").value = "Normal";
+
+  if (reminderSettings.enabled) {
+    sendNotification("New Task Added", task.name, "new-" + task.id);
+  }
 });
 
-document.getElementById("search").addEventListener("input",render);
+// Search
+$("search").addEventListener("input", render);
 
-document.querySelectorAll(".filter").forEach(button=>{
-  button.addEventListener("click",()=>{
+// Filters
+document.querySelectorAll(".filter").forEach(button => {
+  button.addEventListener("click", () => {
     currentFilter = button.dataset.filter;
-    document.querySelectorAll(".filter").forEach(b=>
-      b.classList.toggle("active",b===button)
-    );
+
+    document.querySelectorAll(".filter").forEach(b => {
+      b.classList.toggle("active", b === button);
+    });
+
     render();
   });
 });
 
-function render(){
-  const done = tasks.filter(t=>t.done).length;
+// Notification functions
+function notificationsSupported() {
+  return "Notification" in window;
+}
+
+function updateNotificationStatus() {
+  const status = $("notificationStatus");
+
+  if (!notificationsSupported()) {
+    status.textContent = "This browser does not support notifications.";
+    $("enableNotifications").disabled = true;
+    return;
+  }
+
+  $("enableNotifications").disabled = false;
+
+  if (Notification.permission === "denied") {
+    status.textContent =
+      "Notifications are blocked. Change site permissions in your browser settings.";
+  } else if (Notification.permission !== "granted") {
+    status.textContent =
+      "Notifications are not yet permitted by your browser.";
+  } else if (!reminderSettings.enabled) {
+    status.textContent =
+      "Browser permission granted, but task reminders are turned off.";
+  } else {
+    status.textContent =
+      "Reminders enabled. Daily reminder: " + reminderSettings.time;
+  }
+}
+
+function sendNotification(title, body, key) {
+  if (!notificationsSupported()) return;
+  if (Notification.permission !== "granted") return;
+  if (!reminderSettings.enabled) return;
+
+  const sent = JSON.parse(
+    localStorage.getItem("myTasksSentNotifications") || "{}"
+  );
+
+  const today = new Date().toLocaleDateString("en-CA");
+  const notificationKey = today + "-" + key;
+
+  if (sent[notificationKey]) return;
+
+  try {
+    const notification = new Notification(title, {
+      body: body,
+      icon: "./icon.svg",
+      tag: notificationKey
+    });
+
+    notification.onclick = () => {
+      window.focus();
+      notification.close();
+    };
+
+    sent[notificationKey] = true;
+    localStorage.setItem(
+      "myTasksSentNotifications",
+      JSON.stringify(sent)
+    );
+  } catch (error) {
+    console.error("Notification error:", error);
+  }
+}
+
+$("enableNotifications").addEventListener("click", async () => {
+  if (!notificationsSupported()) {
+    alert("Your browser does not support notifications.");
+    return;
+  }
+
+  if (!window.isSecureContext) {
+    alert("Notifications require a secure HTTPS website.");
+    return;
+  }
+
+  try {
+    const permission = await Notification.requestPermission();
+
+    if (permission === "granted") {
+      reminderSettings.enabled = true;
+      saveSettings();
+
+      new Notification("My Tasks", {
+        body: "Notifications enabled successfully!",
+        icon: "./icon.svg"
+      });
+
+      checkReminders();
+    } else {
+      updateNotificationStatus();
+      alert("Please allow notifications in your browser settings.");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Could not enable notifications.");
+  }
+});
+
+$("disableNotifications").addEventListener("click", () => {
+  reminderSettings.enabled = false;
+  saveSettings();
+});
+
+$("reminderTime").value = reminderSettings.time;
+
+$("saveReminderTime").addEventListener("click", () => {
+  const time = $("reminderTime").value;
+
+  if (!time) {
+    alert("Please choose a reminder time.");
+    return;
+  }
+
+  reminderSettings.time = time;
+  saveSettings();
+  alert("Daily reminder time saved: " + time);
+});
+
+// Check due and overdue tasks
+function checkReminders() {
+  if (!reminderSettings.enabled) return;
+  if (!notificationsSupported()) return;
+  if (Notification.permission !== "granted") return;
+
+  const now = new Date();
+  const today = now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, "0") + "-" +
+    String(now.getDate()).padStart(2, "0");
+
+  const currentTime = String(now.getHours()).padStart(2, "0") +
+    ":" + String(now.getMinutes()).padStart(2, "0");
+
+  tasks.forEach(task => {
+    if (task.done || !task.date) return;
+
+    if (task.date < today) {
+      sendNotification(
+        "Overdue Task",
+        task.name + " — this task is overdue.",
+        "overdue-" + task.id
+      );
+    } else if (task.date === today) {
+      sendNotification(
+        "Task Due Today",
+        task.name + " — don't forget this task!",
+        "due-" + task.id
+      );
+    }
+  });
+
+  if (currentTime >= reminderSettings.time) {
+    sendDailySummary(today);
+  }
+}
+
+function sendDailySummary(today) {
+  const pendingToday = tasks.filter(task =>
+    !task.done && task.date === today
+  );
+
+  if (!pendingToday.length) return;
+
+  const names = pendingToday.slice(0, 3).map(t => t.name).join(", ");
+  const extra = pendingToday.length > 3
+    ? " and " + (pendingToday.length - 3) + " more"
+    : "";
+
+  sendNotification(
+    "Your Daily Task Reminder",
+    pendingToday.length + " task(s) due today: " + names + extra,
+    "daily-summary"
+  );
+}
+
+// Task rendering
+function render() {
+  const completed = tasks.filter(t => t.done).length;
   const total = tasks.length;
-  const percent = total ? Math.round(done/total*100) : 0;
+  const percent = total ? Math.round(completed / total * 100) : 0;
 
-  document.getElementById("total").textContent = total;
-  document.getElementById("completed").textContent = done;
-  document.getElementById("pending").textContent = total-done;
-  document.getElementById("percent").textContent = percent+"%";
-  document.getElementById("progressBar").style.width = percent+"%";
+  $("total").textContent = total;
+  $("completed").textContent = completed;
+  $("pending").textContent = total - completed;
+  $("percent").textContent = percent + "%";
+  $("progressBar").style.width = percent + "%";
 
-  const query = document.getElementById("search").value.toLowerCase();
-  const filtered = tasks.filter(t=>{
-    const matchesSearch = t.name.toLowerCase().includes(query);
+  const query = $("search").value.toLowerCase();
+
+  const filtered = tasks.filter(task => {
+    const matchesSearch = task.name.toLowerCase().includes(query);
+
     const matchesFilter =
-      currentFilter==="All" ||
-      (currentFilter==="Pending" && !t.done) ||
-      (currentFilter==="Completed" && t.done);
+      currentFilter === "All" ||
+      (currentFilter === "Pending" && !task.done) ||
+      (currentFilter === "Completed" && task.done);
+
     return matchesSearch && matchesFilter;
   });
 
-  document.getElementById("taskCount").textContent =
-    filtered.length+" shown";
+  $("taskCount").textContent = filtered.length + " shown";
 
-  const list = document.getElementById("list");
+  const list = $("list");
   list.replaceChildren();
 
-  if(!filtered.length){
+  if (!filtered.length) {
     const empty = document.createElement("div");
-    empty.className="empty";
-    empty.textContent=tasks.length ? "No matching tasks found." :
-      "No tasks yet. Add your first task above!";
+    empty.className = "empty";
+    empty.textContent = tasks.length
+      ? "No matching tasks found."
+      : "No tasks yet. Add your first task above!";
     list.append(empty);
     return;
   }
 
-  filtered.forEach(t=>{
-    const row=document.createElement("div");
-    row.className="task"+(t.done?" done":"");
+  filtered.forEach(task => {
+    const row = document.createElement("div");
+    row.className = "task" + (task.done ? " done" : "");
 
-    const check=document.createElement("input");
-    check.type="checkbox";
-    check.checked=!!t.done;
-    check.setAttribute("aria-label","Complete task");
-    check.addEventListener("change",()=>{
-      t.done=check.checked;
-      save();
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = !!task.done;
+    checkbox.setAttribute("aria-label", "Complete task");
+
+    checkbox.addEventListener("change", () => {
+      task.done = checkbox.checked;
+      saveTasks();
     });
 
-    const info=document.createElement("div");
-    info.className="task-info";
+    const info = document.createElement("div");
+    info.className = "task-info";
 
-    const name=document.createElement("div");
-    name.className="task-name";
-    name.textContent=t.name;
+    const name = document.createElement("div");
+    name.className = "task-name";
+    name.textContent = task.name;
 
-    const meta=document.createElement("div");
-    meta.className="task-meta";
-    meta.textContent=t.date ? "Due "+t.date : "No due date";
+    const meta = document.createElement("div");
+    meta.className = "task-meta";
+    meta.textContent = task.date ? "Due " + task.date : "No due date";
 
-    const priority=document.createElement("span");
-    priority.className="priority "+(t.priority||"Normal");
-    priority.textContent=(t.priority||"Normal")+" priority";
+    const priority = document.createElement("span");
+    priority.className = "priority " + (task.priority || "Normal");
+    priority.textContent = (task.priority || "Normal") + " priority";
+
     meta.append(priority);
-    info.append(name,meta);
+    info.append(name, meta);
 
-    const del=document.createElement("button");
-    del.className="delete";
-    del.textContent="×";
-    del.setAttribute("aria-label","Delete task");
-    del.addEventListener("click",()=>{
-      if(confirm("Delete this task?")){
-        tasks=tasks.filter(item=>item.id!==t.id);
-        save();
+    const del = document.createElement("button");
+    del.className = "delete";
+    del.textContent = "×";
+    del.setAttribute("aria-label", "Delete task");
+
+    del.addEventListener("click", () => {
+      if (confirm("Delete this task?")) {
+        tasks = tasks.filter(t => t.id !== task.id);
+        saveTasks();
       }
     });
 
-    row.append(check,info,del);
+    row.append(checkbox, info, del);
     list.append(row);
   });
 }
 
+updateNotificationStatus();
 render();
 
+// Reminder checks while app is open
+checkReminders();
+setInterval(checkReminders, 60000);
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) checkReminders();
+});
+
+// Service worker
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("./sw.js").catch(console.error);
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .catch(error => console.error("Service worker:", error));
   });
 }
 </script>
 </body>
-      </html>
-    
+                        </html>
+  
