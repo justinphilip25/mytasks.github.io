@@ -1,0 +1,217 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #070b18;
+  color: white;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+canvas {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+}
+
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  background: #070b18eF;
+  gap: 20px;
+  padding: 20px;
+}
+
+h1 {
+  font-size: clamp(55px, 12vw, 110px);
+  font-weight: 900;
+  letter-spacing: -5px;
+}
+
+h1 span {
+  color: #55fff1;
+  text-shadow: 0 0 30px #55fff1;
+}
+
+.tag {
+  color: #55fff1;
+  letter-spacing: 4px;
+  font-size: 11px;
+}
+
+.screen p {
+  color: #ff4f9a;
+  letter-spacing: 3px;
+}
+
+.description {
+  color: #aab5c9 !important;
+  line-height: 2;
+  font-size: 13px;
+  letter-spacing: 0 !important;
+}
+
+button {
+  padding: 15px 30px;
+  background: #55fff1;
+  color: #061018;
+  border: 0;
+  font-weight: 900;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: .2s;
+}
+
+button:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 25px #55fff1;
+}
+
+.screen small {
+  color: #77859e;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+#hud {
+  position: fixed;
+  z-index: 3;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.stats {
+  display: flex;
+  gap: 25px;
+  font-size: 11px;
+  color: #9baac1;
+}
+
+.stats b {
+  display: block;
+  color: #55fff1;
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+.health {
+  color: #55fff1;
+  font-size: 11px;
+  width: 160px;
+}
+
+.bar {
+  height: 6px;
+  background: #27334a;
+  margin-top: 8px;
+}
+
+#hpBar {
+  width: 100%;
+  height: 100%;
+  background: #55fff1;
+  transition: width .2s;
+}
+
+#pause {
+  padding: 10px 15px;
+}
+
+#upgradeChoices {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#upgradeChoices button {
+  max-width: 180px;
+  min-height: 90px;
+  line-height: 1.5;
+}
+
+.mobile {
+  display: none;
+  position: fixed;
+  z-index: 4;
+  bottom: 20px;
+  left: 15px;
+  right: 15px;
+  justify-content: space-between;
+  align-items: end;
+  pointer-events: none;
+}
+
+.mobile button {
+  pointer-events: auto;
+  padding: 12px;
+  background: #10243a;
+  border: 1px solid #55fff1;
+  color: #55fff1;
+}
+
+.pad button {
+  width: 45px;
+  height: 42px;
+  padding: 5px;
+}
+
+.pad div {
+  display: flex;
+  gap: 3px;
+}
+
+#mobileFire, #mobileDash {
+  border-radius: 50%;
+  width: 65px;
+  height: 65px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media(max-width:700px) {
+  .mobile {
+    display: flex;
+  }
+
+  #hud {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+  }
+
+  .stats {
+    gap: 10px;
+    font-size: 9px;
+  }
+
+  .stats b {
+    font-size: 15px;
+  }
+
+  .health {
+    width: 85px;
+  }
+
+  h1 {
+    letter-spacing: -3px;
+  }
+}
