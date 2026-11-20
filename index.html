@@ -1,43 +1,18 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PocketStore</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header>
-<h2>✦ PocketStore</h2>
-<nav>
-<button onclick="show('all')">Discover</button>
-<button onclick="show('apps')">Apps</button>
-<button onclick="show('games')">Games</button>
-<button onclick="show('saved')">Saved</button>
-</nav>
-<button onclick="document.body.classList.toggle('dark')">☾</button>
-</header>
-
-<section class="hero">
-<p>YOUR NEXT FAVORITE APP IS HERE</p>
-<h1>Find your next<br><span>favorite thing.</span></h1>
-<p>Discover apps, clever tools and games.</p>
-<input id="search" placeholder="Search apps and games..." oninput="render()">
-</section>
-
-<main>
-<h2 id="heading">Explore apps</h2>
-<div class="categories">
-<button onclick="category='All';render()">All</button>
-<button onclick="category='Productivity';render()">Productivity</button>
-<button onclick="category='Creative';render()">Creative</button>
-<button onclick="category='Games';render()">Games</button>
-<button onclick="category='Learning';render()">Learning</button>
-</div>
-<div id="grid" class="grid"></div>
-</main>
-
-<footer>© 2026 PocketStore · Independent demo project</footer>
-<script src="app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Lens — AI Camera</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
