@@ -1,0 +1,209 @@
+:root {
+  --bg: #11131a;
+  --panel: #1a1d27;
+  --ink: #eef0f5;
+  --muted: #8c93a6;
+  --amber: #e8a33d;
+  --teal: #4fd1c5;
+  --danger: #e8683d;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 32px;
+}
+
+.app-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.app-mark {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+}
+
+.app-sub {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.app-footer {
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  max-width: 320px;
+  text-align: center;
+}
+
+.camera-shell {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: var(--panel);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: filter 0.15s ease;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.state-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  background: rgba(11, 13, 18, 0.85);
+  font-size: 0.9rem;
+}
+
+.state-panel.muted {
+  color: var(--muted);
+  background: transparent;
+}
+
+.ai-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(79, 209, 197, 0.15);
+  border: 1px solid var(--teal);
+  color: var(--teal);
+  font-size: 0.75rem;
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+
+.ai-badge.warn {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: rgba(232, 104, 61, 0.15);
+}
+
+.filter-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  width: 100%;
+  padding-bottom: 2px;
+}
+
+.filter-chip {
+  flex: none;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.filter-chip.active {
+  color: var(--bg);
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--panel);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-btn.active {
+  background: rgba(79, 209, 197, 0.18);
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.shutter {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: none;
+  background: var(--amber);
+  color: #1a1206;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(232, 163, 61, 0.35);
+}
+
+.shutter:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+@media (max-width: 420px) {
+  .camera-shell {
+    max-width: 100%;
+  }
+}
